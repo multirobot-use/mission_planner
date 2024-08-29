@@ -1,0 +1,11 @@
+#result 0 -> FAILURE
+#result 1 -> SUCCESS
+#result 2 -> HALTED
+
+Task task
+uint8 result
+ist_use_collaboration_msgs/DoCloserInspectionGoal do_closer_inspection
+---
+bool ack
+---
+string status

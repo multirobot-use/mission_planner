@@ -1,0 +1,146 @@
+<root main_tree_to_execute = "MainTree" >
+
+    <BehaviorTree ID="MainTree">
+        <ReactiveFallback>
+            <ReactiveSequence>
+                <MissionOver/>
+                <BackToStation/>
+            </ReactiveSequence>
+            <ForceRunning>
+                <ReactiveFallback>
+                    <ReactiveSequence>
+                        <IsBatteryEnough/>
+                        <ReactiveFallback>
+                            <ForceFailure>
+                                <SubTree ID="DropToolTree"/>
+                            </ForceFailure>
+                            <ReactiveSequence>
+                                <Inverter>
+                                    <Idle/>
+                                </Inverter>
+                                <SubTree ID="PerformTaskTree"/>
+                            </ReactiveSequence>
+                        </ReactiveFallback>
+                    </ReactiveSequence>
+                    <ReactiveFallback>
+                        <IsBatteryFull/>
+                        <SubTree ID="RechargeTree"/>
+                    </ReactiveFallback>
+                </ReactiveFallback>
+            </ForceRunning>
+        </ReactiveFallback>
+    </BehaviorTree>
+
+    <BehaviorTree ID="DropToolTree">
+        <ReactiveSequence>
+            <NeedToDropTheTool/>
+            <Sequence>
+                <Fallback>
+                    <IsAgentNearStation/>
+                    <GoNearStation/>
+                </Fallback>
+                <DropTool/>
+            </Sequence>
+        </ReactiveSequence>
+    </BehaviorTree>
+
+    <BehaviorTree ID="PerformTaskTree">
+        <ReactiveFallback>
+            <ReactiveSequence>
+                <IsTaskMonitor/>
+                <SubTree ID="MonitorTree"/>
+            </ReactiveSequence>
+            <ReactiveSequence>
+                <IsTaskMonitorUGV/>
+                <SubTree ID="MonitorUGVTree"/>
+            </ReactiveSequence>
+            <ReactiveSequence>
+                <IsTaskInspect/>
+                <SubTree ID="InspectTree"/>
+            </ReactiveSequence>
+            <ReactiveSequence>
+                <IsTaskInspectPVArray/>
+                <SubTree ID="InspectPVArrayTree"/>
+            </ReactiveSequence>
+            <ReactiveSequence>
+                <IsTaskDeliverTool/>
+                <SubTree ID="DeliverToolTree"/>
+            </ReactiveSequence>
+            <ReactiveSequence>
+                <IsTaskRecharge/>
+                <SubTree ID="RechargeTree"/>
+            </ReactiveSequence>
+        </ReactiveFallback>
+    </BehaviorTree>
+
+    <BehaviorTree ID="MonitorTree">
+        <Sequence>
+            <Fallback>
+                <IsAgentNearHumanTarget/>
+                <GoNearHumanTarget/>
+            </Fallback>
+            <MonitorHumanTarget/>
+        </Sequence>
+    </BehaviorTree>
+
+    <BehaviorTree ID="MonitorUGVTree">
+        <Sequence>
+            <Fallback>
+                <IsAgentNearUGV/>
+                <GoNearUGV/>
+            </Fallback>
+            <MonitorUGV/>
+        </Sequence>
+    </BehaviorTree>
+
+    <BehaviorTree ID="InspectTree">
+        <Sequence>
+            <Fallback>
+                <IsAgentNearWP/>
+                <GoNearWP/>
+            </Fallback>
+            <TakeImage/>
+        </Sequence>
+    </BehaviorTree>
+
+    <BehaviorTree ID="InspectPVArrayTree">
+        <Sequence>
+            <Fallback>
+                <IsAgentNearWP/>
+                <GoNearWP/>
+            </Fallback>
+            <InspectPVArray/>
+        </Sequence>
+    </BehaviorTree>
+
+    <BehaviorTree ID="DeliverToolTree">
+        <ReactiveSequence>
+            <ReactiveFallback>
+                <HasAgentTheTool/>
+                <Sequence>
+                    <Fallback>
+                        <IsAgentNearStation/>
+                        <GoNearStation/>
+                    </Fallback>
+                    <PickTool/>
+                </Sequence>
+            </ReactiveFallback>
+            <Fallback>
+                <IsAgentNearHumanTarget/>
+                <GoNearHumanTarget/>
+            </Fallback>
+            <DeliverTool/>
+        </ReactiveSequence>
+    </BehaviorTree>
+
+    <BehaviorTree ID="RechargeTree">
+        <ReactiveSequence>
+            <Fallback>
+                <IsAgentNearChargingStation/>
+                <GoNearChargingStation/>
+            </Fallback>
+            <Recharge/>
+        </ReactiveSequence>
+    </BehaviorTree>
+
+</root>

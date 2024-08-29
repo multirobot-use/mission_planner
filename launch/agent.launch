@@ -1,0 +1,64 @@
+<launch>
+
+  <!-- Launch Agent Node -->
+  <!-- Worlds: none, empty, power_tower, 2towers, burguillos, pv_farm -->
+  <arg name="agent_debugger" default="none"/>
+  <arg name="id" default="0"/>
+  <arg name="ns_prefix" default="uav"/>
+  <arg name="type" default="ACW"/>
+  <arg name="pose_frame_id" default="map"/>
+  <arg name="config_file" default="$(find human_aware_collaboration_planner)/config/conf.yaml"/>
+  <arg name="battery_faker" default="true"/>
+  <arg name="autonomous_landing" default="false"/>
+  <arg name="take_off_height" default="10"/>
+  <arg name="distance_error" default="2"/>
+  <arg name="goto_error" default="1"/>
+
+  <arg name="world" default="power_tower"/>
+
+  <group ns="$(arg ns_prefix)$(arg id)/agent_behaviour_manager">
+
+    <param name="battery_topic" value="/$(arg ns_prefix)$(arg id)/mavros/battery" unless="$(eval battery_faker)"/>
+    <param name="battery_topic" value="/$(arg ns_prefix)$(arg id)/battery_fake" if="$(eval battery_faker)"/>
+    <param name="pose_topic" value="/$(arg ns_prefix)$(arg id)/ual/pose"/>
+    <param name="state_topic" value="/$(arg ns_prefix)$(arg id)/ual/state"/>
+    <param name="take_off_height" value="$(arg take_off_height)"/>
+    <param name="distance_error" value="$(arg distance_error)"/>
+    <param name="goto_error" value="$(arg goto_error)"/>
+
+  </group>
+
+  <node pkg="human_aware_collaboration_planner" type="agent_behaviour_manager" name="agent_behaviour_manager" 
+    output="screen" ns="$(arg ns_prefix)$(arg id)" launch-prefix="xterm -e gdb -ex 'set print thread-events off' -ex run --args" 
+    if="$(eval agent_debugger=='gdb')">
+    <param name="id" type="str" value="$(arg id)"/>
+    <param name="ns_prefix" value="$(arg ns_prefix)"/>
+    <param name="type" value="$(arg type)"/>
+    <param name="pose_frame_id" value="$(arg pose_frame_id)"/>
+    <param name="config_file" value="$(arg config_file)"/>
+    <param name="autonomous_landing" value="$(arg autonomous_landing)"/>
+  </node>
+
+  <node pkg="human_aware_collaboration_planner" type="agent_behaviour_manager" name="agent_behaviour_manager" 
+    output="screen" ns="$(arg ns_prefix)$(arg id)" 
+    launch-prefix="valgrind -v --leak-check=full --show-leak-kinds=all --track-origins=yes --log-file=/home/baldman/valgrind_agent_$(arg id).log" 
+    if="$(eval agent_debugger=='valgrind')">
+    <param name="id" type="str" value="$(arg id)"/>
+    <param name="ns_prefix" value="$(arg ns_prefix)"/>
+    <param name="type" value="$(arg type)"/>
+    <param name="pose_frame_id" value="$(arg pose_frame_id)"/>
+    <param name="config_file" value="$(arg config_file)"/>
+    <param name="autonomous_landing" value="$(arg autonomous_landing)"/>
+  </node>
+
+  <node pkg="human_aware_collaboration_planner" type="agent_behaviour_manager" name="agent_behaviour_manager" 
+    output="screen" ns="$(arg ns_prefix)$(arg id)" if="$(eval agent_debugger=='none')">
+    <param name="id" type="str" value="$(arg id)"/>
+    <param name="ns_prefix" value="$(arg ns_prefix)"/>
+    <param name="type" value="$(arg type)"/>
+    <param name="pose_frame_id" value="$(arg pose_frame_id)"/>
+    <param name="config_file" value="$(arg config_file)"/>
+    <param name="autonomous_landing" value="$(arg autonomous_landing)"/>
+  </node>
+
+</launch>

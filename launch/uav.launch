@@ -2,8 +2,10 @@
     <!-- Mode: sitl, serial, custom -->
     <!-- Debuggers: gdb, valgrind, none -->
     <!-- Worlds: none, empty, power_tower, 2towers, burguillos, pv_farm -->
+    <!-- Battery mode: static, only_discharge, recharge_in_base, recharge_anywhere -->
     <arg name="mode" default="sitl"/>
     <arg name="agent_debugger" default="none"/>
+    <arg name="battery_mode" default="recharge_in_base"/>
 
     <arg name="config_file" default="$(find human_aware_collaboration_planner)/config/conf.yaml"/>
 
@@ -87,6 +89,7 @@
       <arg name="ns_prefix" value="$(arg ns_prefix)"/>
       <arg name="config_file" value="$(arg config_file)"/>
       <arg name="battery_faker" value="$(arg battery_faker)"/>
+      <arg name="battery_mode" value="$(arg battery_mode)"/>
       <arg name="ist_ugv_faker" value="$(arg ist_ugv_faker)"/>
     </include>
 

@@ -3,6 +3,7 @@
     <!-- Worlds: none, empty, power_tower, 2towers, burguillos, pv_farm -->
     <!-- Debuggers: gdb, valgrind, none -->
     <!-- Backends: mavros, light -->
+    <!-- Battery mode: static, only_discharge, recharge_in_base, recharge_anywhere -->
     <arg name="number_UAV" default="1"/>
     <arg name="mode" default="sitl"/>
     <arg name="world" default="pv_farm"/>
@@ -29,6 +30,7 @@
     <arg name="max_orientation_error" default="0.01"/>
 
     <arg name="battery_faker" default="true"/>
+    <arg name="battery_mode" default="recharge_in_base"/>
     <arg name="ist_ugv_faker" default="false"/>
 
 
@@ -76,6 +78,7 @@
       <arg name="config_file" value="$(arg config_file)"/>
 
       <arg name="battery_faker" value="$(arg battery_faker)"/>
+      <arg name="battery_mode" value="$(arg battery_mode)"/>
       <arg name="ist_ugv_faker" value="$(arg ist_ugv_faker)"/>
 
       <arg name="world" value="$(arg world)"/>
@@ -113,6 +116,7 @@
       <arg name="config_file" value="$(arg config_file)"/>
 
       <arg name="battery_faker" value="$(arg battery_faker)"/>
+      <arg name="battery_mode" value="$(arg battery_mode)"/>
       <arg name="ist_ugv_faker" value="$(arg ist_ugv_faker)"/>
 
       <arg name="world" value="$(arg world)"/>
@@ -150,6 +154,7 @@
       <arg name="config_file" value="$(arg config_file)"/>
 
       <arg name="battery_faker" value="$(arg battery_faker)"/>
+      <arg name="battery_mode" value="$(arg battery_mode)"/>
       <arg name="ist_ugv_faker" value="$(arg ist_ugv_faker)"/>
 
       <arg name="world" value="$(arg world)"/>
@@ -187,6 +192,7 @@
       <arg name="config_file" value="$(arg config_file)"/>
 
       <arg name="battery_faker" value="$(arg battery_faker)"/>
+      <arg name="battery_mode" value="$(arg battery_mode)"/>
       <arg name="ist_ugv_faker" value="$(arg ist_ugv_faker)"/>
 
       <arg name="world" value="$(arg world)"/>
@@ -224,6 +230,7 @@
       <arg name="config_file" value="$(arg config_file)"/>
 
       <arg name="battery_faker" value="$(arg battery_faker)"/>
+      <arg name="battery_mode" value="$(arg battery_mode)"/>
       <arg name="ist_ugv_faker" value="$(arg ist_ugv_faker)"/>
 
       <arg name="world" value="$(arg world)"/>

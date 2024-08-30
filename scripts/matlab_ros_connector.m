@@ -1,24 +1,17 @@
-%% Iniciar ROS
-% Definir la dirección IP del maestro ROS y el puerto (cambiar si es necesario)
-ipAddress = 'http://localhost:11311';  % Dirección del maestro ROS
-rosinit(ipAddress);  % Iniciar conexión con el maestro ROS
+%% Initialize ROS-Matlab connection
+% Define ROS master's IP address and port
+ipAddress = 'http://localhost:11311';
 
-%% Crear un publicador en el tema '/chatter' con el tipo de mensaje 'std_msgs/String'
-pub = rospublisher('/chatter', 'std_msgs/String');
+% Initialize ROS master's connection
+rosinit(ipAddress);
 
-% Crear un mensaje de tipo 'std_msgs/String'
-msg = rosmessage(pub);
-msg.Data = '¡Hola desde MATLAB!';
+%% Create subscriber to listen the mission over signal
+mission_over_sub = rossubscriber('/mission_over', 'mission_planner/MissionOver');
 
-% Publicar el mensaje en el tema
-send(pub, msg);
+% Receive a message from mission over subscriber, waiting up to 10s
+mission_over = receive(mission_over_sub, 10);
+% Show the message information
+disp(mission_over.value);
 
-%% Crear un suscriptor al tema '/chatter' con el tipo de mensaje 'std_msgs/String'
-sub = rossubscriber('/chatter', 'std_msgs/String');
-
-% Recibir un mensaje del tema
-receivedMsg = receive(sub, 10);  % Esperar hasta 10 segundos para recibir un mensaje
-disp(receivedMsg.Data);  % Mostrar el contenido del mensaje recibido
-
-%% Finalizar la conexion con ROS
+%% End connection with ROS
 rosshutdown;

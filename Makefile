@@ -147,9 +147,3 @@ phase_2_unforeseen_event_8:
 phase_2_unforeseen_event_9:
 	@echo "Unforseen event: mission over"
 	@rostopic pub /mission_over human_aware_collaboration_planner/MissionOver "value: true"
-
-autonomous_landing_node:
-	@roslaunch ~/autonomous_landing_workspace/src/autonomous_landing_uav/transforms.launch
-
-autonomous_landing_start:
-	@rostopic pub --once /start_landing std_msgs/String "data: ''"

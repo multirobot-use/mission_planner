@@ -9,7 +9,6 @@
   <arg name="pose_frame_id" default="map"/>
   <arg name="config_file" default="$(find human_aware_collaboration_planner)/config/conf.yaml"/>
   <arg name="battery_faker" default="true"/>
-  <arg name="autonomous_landing" default="false"/>
   <arg name="take_off_height" default="10"/>
   <arg name="distance_error" default="2"/>
   <arg name="goto_error" default="1"/>
@@ -36,7 +35,6 @@
     <param name="type" value="$(arg type)"/>
     <param name="pose_frame_id" value="$(arg pose_frame_id)"/>
     <param name="config_file" value="$(arg config_file)"/>
-    <param name="autonomous_landing" value="$(arg autonomous_landing)"/>
   </node>
 
   <node pkg="human_aware_collaboration_planner" type="agent_behaviour_manager" name="agent_behaviour_manager" 
@@ -48,7 +46,6 @@
     <param name="type" value="$(arg type)"/>
     <param name="pose_frame_id" value="$(arg pose_frame_id)"/>
     <param name="config_file" value="$(arg config_file)"/>
-    <param name="autonomous_landing" value="$(arg autonomous_landing)"/>
   </node>
 
   <node pkg="human_aware_collaboration_planner" type="agent_behaviour_manager" name="agent_behaviour_manager" 
@@ -58,7 +55,6 @@
     <param name="type" value="$(arg type)"/>
     <param name="pose_frame_id" value="$(arg pose_frame_id)"/>
     <param name="config_file" value="$(arg config_file)"/>
-    <param name="autonomous_landing" value="$(arg autonomous_landing)"/>
   </node>
 
 </launch>

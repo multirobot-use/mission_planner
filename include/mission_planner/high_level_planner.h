@@ -25,12 +25,10 @@
 #include "mission_planner/MissionOver.h"
 #include "mission_planner/Waypoint.h"
 #include "mission_planner/Task.h"
+#include "mission_planner/DoCloserInspectionAction.h"
 
 #include "geometry_msgs/PoseStamped.h"
 #include "sensor_msgs/BatteryState.h"
-
-#include "ist_use_collaboration_msgs/DoCloserInspectionAction.h"
-
 
 //Forward declarations
 class Planner;

@@ -17,10 +17,12 @@ find_package(catkin REQUIRED COMPONENTS
   actionlib
   behaviortree_cpp_v3
   uav_abstraction_layer
-  #roscpp
   mavros_msgs
   #YAML_CPP
-  ist_use_collaboration_msgs
+  # ist_use_collaboration_msgs
+  geographic_msgs
+  sensor_msgs
+  roscpp
 )
 
 # 4. Enable Python module suport (catkin_python_setup())
@@ -56,6 +58,9 @@ add_action_files(
   NewTaskList.action
   BatteryEnough.action
   TaskResult.action
+  # File from the old ist_use_collaboration_msgs package
+  RequestMobileChargingStation.action
+  DoCloserInspection.action
 )
 
 # 6. Invoke message/service/action generation (generate_messages())
@@ -64,13 +69,15 @@ generate_messages(
   std_msgs
   geometry_msgs
   actionlib_msgs
-  ist_use_collaboration_msgs
+  # ist_use_collaboration_msgs
+  geographic_msgs
+  sensor_msgs
 )
 
 # 7. Specify package build info export (catkin_package())
 catkin_package(
   INCLUDE_DIRS include
-  CATKIN_DEPENDS behaviortree_cpp_v3 message_runtime ist_use_collaboration_msgs uav_abstraction_layer
+  CATKIN_DEPENDS behaviortree_cpp_v3 message_runtime uav_abstraction_layer std_msgs geographic_msgs sensor_msgs # ist_use_collaboration_msgs
 )
 
 include_directories(

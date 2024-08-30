@@ -25,6 +25,7 @@
 #include "mission_planner/MissionOver.h"
 #include "mission_planner/Waypoint.h"
 #include "mission_planner/Task.h"
+#include "mission_planner/RequestMobileChargingStationAction.h"
 
 #include "uav_abstraction_layer/Land.h"
 #include "uav_abstraction_layer/TakeOff.h"
@@ -46,8 +47,6 @@
 #include "behaviortree_cpp_v3/decorator_node.h"
 
 #include <uav_abstraction_layer/geographic_to_cartesian.h>
-
-#include "ist_use_collaboration_msgs/RequestMobileChargingStationAction.h"
 
 //Forward declaration
 class AgentNode;

@@ -935,9 +935,9 @@ void Agent::taskResultCB(const mission_planner::TaskResultGoalConstPtr& goal){
   }
 
   //Request Closer Inspection to UGVs if needed
-  actionlib::SimpleActionClient<ist_use_collaboration_msgs::DoCloserInspectionAction> 
+  actionlib::SimpleActionClient<mission_planner::DoCloserInspectionAction> 
     do_closer_inspection_ac_("/atrvjr/cooperation_use/do_closer_inspection", true);
-  ist_use_collaboration_msgs::DoCloserInspectionGoal msg;
+  mission_planner::DoCloserInspectionGoal msg;
   if(!goal->do_closer_inspection.xyz_coordinates.empty() || !goal->do_closer_inspection.gps_coordinates.empty())
   {
     do_closer_inspection_ac_.waitForServer(ros::Duration(1.0));

@@ -4,7 +4,7 @@
 
 Task task
 uint8 result
-ist_use_collaboration_msgs/DoCloserInspectionGoal do_closer_inspection
+mission_planner/DoCloserInspectionGoal do_closer_inspection
 ---
 bool ack
 ---

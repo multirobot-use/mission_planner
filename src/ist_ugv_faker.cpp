@@ -4,8 +4,8 @@
 #include <actionlib/client/simple_action_client.h>
 #include <actionlib_tutorials/FibonacciAction.h>
 
-#include "ist_use_collaboration_msgs/RequestMobileChargingStationAction.h"
-#include "ist_use_collaboration_msgs/DoCloserInspectionAction.h"
+#include "mission_planner/RequestMobileChargingStationAction.h"
+#include "mission_planner/DoCloserInspectionAction.h"
 
 #include <ros/ros.h>
 #include <actionlib/server/simple_action_server.h>
@@ -16,11 +16,11 @@
 class ISTugvFaker{
   protected:
     ros::NodeHandle nh_;
-    actionlib::SimpleActionServer<ist_use_collaboration_msgs::RequestMobileChargingStationAction> mobile_station_as_;
-    actionlib::SimpleActionServer<ist_use_collaboration_msgs::DoCloserInspectionAction> closer_inspection_as_;
+    actionlib::SimpleActionServer<mission_planner::RequestMobileChargingStationAction> mobile_station_as_;
+    actionlib::SimpleActionServer<mission_planner::DoCloserInspectionAction> closer_inspection_as_;
 
-    ist_use_collaboration_msgs::RequestMobileChargingStationResult mobile_station_result_;
-    ist_use_collaboration_msgs::DoCloserInspectionResult closer_inspection_result_;
+    mission_planner::RequestMobileChargingStationResult mobile_station_result_;
+    mission_planner::DoCloserInspectionResult closer_inspection_result_;
 
     // UGV Pose Fakers Publishers
     ros::Publisher atrvjr_pose_pub_;
@@ -61,13 +61,13 @@ class ISTugvFaker{
 
     ~ISTugvFaker(void){}
 
-    void mobileStationCB(const ist_use_collaboration_msgs::RequestMobileChargingStationGoalConstPtr &goal) {
+    void mobileStationCB(const mission_planner::RequestMobileChargingStationGoalConstPtr &goal) {
       mobile_station_result_.success = true;
       ROS_INFO("Requested mobile charging station. Returning SUCCESS");
       mobile_station_as_.setSucceeded(mobile_station_result_);
     }
 
-    void closerInspectionCB(const ist_use_collaboration_msgs::DoCloserInspectionGoalConstPtr &goal) {
+    void closerInspectionCB(const mission_planner::DoCloserInspectionGoalConstPtr &goal) {
       closer_inspection_result_.success = true;
       ROS_INFO("Requested closer inspection. Returning SUCCESS");
       closer_inspection_as_.setSucceeded(closer_inspection_result_);

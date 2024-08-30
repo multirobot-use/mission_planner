@@ -71,9 +71,9 @@ BT::NodeStatus GoNearChargingStation::tick(){
   /*************************************************************************************************************/
 
   /************************** IST Collaboration: Mobile Charging Station ***************************************/
-  actionlib::SimpleActionClient<ist_use_collaboration_msgs::RequestMobileChargingStationAction> 
+  actionlib::SimpleActionClient<mission_planner::RequestMobileChargingStationAction> 
     request_charging_ac_("/jackal0/cooperation_use/request_mobile_charging_station", true);
-  ist_use_collaboration_msgs::RequestMobileChargingStationGoal goal;
+  mission_planner::RequestMobileChargingStationGoal goal;
   request_charging_ac_.waitForServer(ros::Duration(1.0));
   goal.requester_id = agent_->id_;
   request_charging_ac_.sendGoal(goal);
@@ -82,7 +82,7 @@ BT::NodeStatus GoNearChargingStation::tick(){
   //If result, read result. If true, change assigned_charging_station_, if false, land on a fixed platform.
   if(request_charging_ac_.waitForResult(ros::Duration(5.0)))
   {
-    ist_use_collaboration_msgs::RequestMobileChargingStationResultConstPtr result = request_charging_ac_.getResult();
+    mission_planner::RequestMobileChargingStationResultConstPtr result = request_charging_ac_.getResult();
     if(result->success)
     {
       assigned_charging_station = agent_->jackal_pose_;
@@ -2130,9 +2130,8 @@ AgentNode::AgentNode(mission_planner::AgentBeacon beacon) : battery_enough_(true
 
   //Load of config file
   std::string path = ros::package::getPath("mission_planner");
-  //std::string path_evora = ros::package::getPath("ist_use_collaboration_msgs");
   ros::param::param<std::string>("~config_file", config_file_, path + "/config/conf.yaml");
-  //ros::param::param<std::string>("~config_file_evora", config_file_evora_, path_evora + "/config/placemarks.yaml");
+  // ros::param::param<std::string>("~config_file_evora", config_file_evora_, path + "/config/placemarks.yaml");
   readConfigFile(config_file_);
   //readEvoraConfigFile(config_file_evora_);
 

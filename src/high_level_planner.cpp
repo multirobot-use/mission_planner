@@ -1,4 +1,4 @@
-#include "human_aware_collaboration_planner/high_level_planner.h"
+#include "mission_planner/high_level_planner.h"
 
 //class Agent
 //class Agent Constructors
@@ -9,7 +9,7 @@ Agent::Agent() : id_(), type_(), position_(), battery_(), task_queue_(), positio
   pose_topic_(), battery_topic_() {}
 
 Agent::Agent(Planner* planner, std::string id, std::string type, ros::Time first_beacon_time,
-    human_aware_collaboration_planner::AgentBeacon first_beacon) :
+    mission_planner::AgentBeacon first_beacon) :
   planner_(planner), id_(id), type_(type), position_(), battery_(), task_queue_(), battery_enough_(true),
   battery_as_(nh_, "/" + id + "/battery_enough", boost::bind(&Agent::batteryEnoughCB, this, _1), false), 
   task_result_as_(nh_, "/" + id + "/task_result", boost::bind(&Agent::taskResultCB, this, _1), false),
@@ -134,14 +134,14 @@ void Agent::deleteOldTaskQueue(){
 int Agent::getQueueSize(){return task_queue_.size();}
 void Agent::sendQueueToAgent(){
   ntl_ac_.waitForServer(ros::Duration(1.0));
-  human_aware_collaboration_planner::NewTaskListGoal goal;
+  mission_planner::NewTaskListGoal goal;
 
   goal.agent_id = id_;
 
   auto queue_size = task_queue_.size(); 
   for(int i = 0; i < queue_size; ++i)
   {
-    human_aware_collaboration_planner::Task task_msg;
+    mission_planner::Task task_msg;
     classes::Task* task = task_queue_.front();
 
     task_msg.id = task->getID();
@@ -298,8 +298,8 @@ float Agent::computeTaskCost(classes::Task* task){
     classes::Position human_position;
     classes::Position tool_position;
     classes::Position aux_position = classes::Position(0,0,0);
-    human_aware_collaboration_planner::Waypoint central_position;
-    std::vector<human_aware_collaboration_planner::Waypoint> inspect_waypoints;
+    mission_planner::Waypoint central_position;
+    std::vector<mission_planner::Waypoint> inspect_waypoints;
     switch(task->getType())
     {
       case 'M':
@@ -341,10 +341,10 @@ float Agent::computeTaskCost(classes::Task* task){
     classes::Position previous_charging_station;
     classes::Position tool_position;
     classes::Position aux_position = classes::Position(0,0,0);
-    human_aware_collaboration_planner::Waypoint central_position;
-    human_aware_collaboration_planner::Waypoint previous_central_position;
-    std::vector<human_aware_collaboration_planner::Waypoint> inspect_waypoints;
-    std::vector<human_aware_collaboration_planner::Waypoint> previous_inspect_waypoints;
+    mission_planner::Waypoint central_position;
+    mission_planner::Waypoint previous_central_position;
+    std::vector<mission_planner::Waypoint> inspect_waypoints;
+    std::vector<mission_planner::Waypoint> previous_inspect_waypoints;
     classes::Task* previous_task = getLastTask();
     switch(previous_task->getType())
     {
@@ -760,14 +760,14 @@ bool Agent::getLastBeaconTimeout(){return last_beacon_.timeout;}
 
 //class Agent Setters
 void Agent::setLastBeaconTime(ros::Time last_beacon_time){last_beacon_time_ = last_beacon_time;}
-void Agent::setLastBeacon(human_aware_collaboration_planner::AgentBeacon last_beacon){last_beacon_ = last_beacon;}
+void Agent::setLastBeacon(mission_planner::AgentBeacon last_beacon){last_beacon_ = last_beacon;}
 
 //class Agent Callbacks
 void Agent::positionCallbackUAL(const geometry_msgs::PoseStamped& pose){
   position_.update(pose.pose.position.x, pose.pose.position.y, pose.pose.position.z);
 }
 void Agent::batteryCallback(const sensor_msgs::BatteryState& battery){battery_ = battery.percentage;}
-void Agent::batteryEnoughCB(const human_aware_collaboration_planner::BatteryEnoughGoalConstPtr& goal){
+void Agent::batteryEnoughCB(const mission_planner::BatteryEnoughGoalConstPtr& goal){
   //TODO: planned battery recharges initial percentage should always be higher than the emergency !battery_enough_
   battery_enough_ = goal->value;
   ROS_WARN_STREAM("[batteryEnoughCB] (" << id_ << ") Noticed that battery_enough_ = " << (battery_enough_ ? "true" :
@@ -787,8 +787,8 @@ void Agent::batteryEnoughCB(const human_aware_collaboration_planner::BatteryEnou
   planner_->performTaskAllocation(); 
 }
 
-void Agent::taskResultCB(const human_aware_collaboration_planner::TaskResultGoalConstPtr& goal){
-  human_aware_collaboration_planner::TaskResultResult task_result_result_;
+void Agent::taskResultCB(const mission_planner::TaskResultGoalConstPtr& goal){
+  mission_planner::TaskResultResult task_result_result_;
   classes::Task* task = planner_->getPendingTask(goal->task.id);
   char task_type;
 
@@ -981,19 +981,19 @@ void Agent::print(std::ostream& os){
 }
 
 //Planner definitions
-Planner::Planner(human_aware_collaboration_planner::PlannerBeacon beacon) : 
+Planner::Planner(mission_planner::PlannerBeacon beacon) : 
   nt_as_(nh_, "incoming_task_action", boost::bind(&Planner::incomingTask, this, _1), false), 
   beacon_rate_(1), beacon_(beacon), mission_over_(false)
 {
   nt_as_.start();
 
   //Load of known position and human targets known positions
-  std::string path = ros::package::getPath("human_aware_collaboration_planner");
+  std::string path = ros::package::getPath("mission_planner");
   ros::param::param<std::string>("~config_file", config_file, path + "/config/conf.yaml");
 
   readConfigFile(config_file);
 
-  beacon_pub_ = nh_.advertise<human_aware_collaboration_planner::PlannerBeacon>("/planner_beacon", 1);
+  beacon_pub_ = nh_.advertise<mission_planner::PlannerBeacon>("/planner_beacon", 1);
   beacon_sub_ = nh_.subscribe("/agent_beacon", 100, &Planner::beaconCallback, this);
   mission_over_sub_ = nh_.subscribe("/mission_over", 1, &Planner::missionOverCallback, this);
   ROS_INFO("[Planner] Initialization complete");
@@ -1056,7 +1056,7 @@ void Planner::readConfigFile(std::string config_file){
   }
 }
 
-bool Planner::checkTaskParams(const human_aware_collaboration_planner::NewTaskGoalConstPtr& goal){
+bool Planner::checkTaskParams(const mission_planner::NewTaskGoalConstPtr& goal){
   std::map <std::string, classes::HumanTarget>::iterator human_itr;
   std::map <std::string, classes::Position>::iterator position_itr;
   std::map <std::string, classes::Tool>::iterator tool_itr;
@@ -1134,7 +1134,7 @@ bool Planner::checkTaskParams(const human_aware_collaboration_planner::NewTaskGo
 }
 
 //New Tasks callback
-void Planner::incomingTask(const human_aware_collaboration_planner::NewTaskGoalConstPtr& goal){
+void Planner::incomingTask(const mission_planner::NewTaskGoalConstPtr& goal){
   //Recharge tasks are not supposed to come from this way. Recharge tasks are created by the High-Level Planner
   //Wait tasks are not supposed to come from this way. Wait tasks are created by the High-Level Planner
   nt_feedback_.status = "Reading the New Task";
@@ -1287,7 +1287,7 @@ void Planner::incomingTask(const human_aware_collaboration_planner::NewTaskGoalC
 }
 
 //Agent Beacon Handler
-void Planner::beaconCallback(const human_aware_collaboration_planner::AgentBeacon::ConstPtr& beacon){
+void Planner::beaconCallback(const mission_planner::AgentBeacon::ConstPtr& beacon){
   std::map <std::string, Agent>::iterator agent_itr = agent_map_.find(beacon->id);
   if(agent_itr == agent_map_.end())
   {
@@ -1318,7 +1318,7 @@ void Planner::beaconCallback(const human_aware_collaboration_planner::AgentBeaco
   }
 }
 
-void Planner::missionOverCallback(const human_aware_collaboration_planner::MissionOver& value){mission_over_ = value.value;}
+void Planner::missionOverCallback(const mission_planner::MissionOver& value){mission_over_ = value.value;}
 
 //Method to reasign all not finished tasks
 void Planner::performTaskAllocation(){
@@ -1342,11 +1342,11 @@ void Planner::performTaskAllocation(){
   std::vector <std::string> idle_deliver_agents;
   std::vector <std::string> idle_inspect_agents;
   std::vector <std::string> idle_monitor_agents;
-  std::vector <human_aware_collaboration_planner::Waypoint> inspect_waypoints;
+  std::vector <mission_planner::Waypoint> inspect_waypoints;
   std::vector <std::string> agent_list;
   std::vector <std::string>::iterator agent_list_itr;
-  std::vector <human_aware_collaboration_planner::Waypoint> aux_waypoints;
-  std::map <std::string, std::vector <human_aware_collaboration_planner::Waypoint>> divided_waypoints;
+  std::vector <mission_planner::Waypoint> aux_waypoints;
+  std::map <std::string, std::vector <mission_planner::Waypoint>> divided_waypoints;
   std::vector <std::string> deliver_tasks_copy;
   std::vector <std::string> inspect_tasks_copy;
   std::vector <std::string> monitor_tasks_copy;
@@ -1604,7 +1604,7 @@ void Planner::deletePendingTask(std::string task_id){
   return;
 }
 
-bool Planner::updateTaskParams(const human_aware_collaboration_planner::NewTaskGoalConstPtr& goal){
+bool Planner::updateTaskParams(const mission_planner::NewTaskGoalConstPtr& goal){
   classes::Task* aux;
 
   std::string id = goal->task.id;
@@ -1739,7 +1739,7 @@ bool Planner::getMissionOver(){return mission_over_;}
 int main(int argc, char **argv){
   ros::init(argc, argv, "high_level_planner");
 
-  human_aware_collaboration_planner::PlannerBeacon beacon;
+  mission_planner::PlannerBeacon beacon;
   Planner planner(beacon);
   ROS_INFO("[main] Ending...");
 

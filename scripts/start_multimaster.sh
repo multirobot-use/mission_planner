@@ -5,4 +5,4 @@ sudo ufw disable
 #sudo service procps restart
 #netstat -g
 
-roslaunch human_aware_collaboration_planner multimaster.launch __ns:=uav$UAV_ID
+roslaunch mission_planner multimaster.launch __ns:=uav$UAV_ID

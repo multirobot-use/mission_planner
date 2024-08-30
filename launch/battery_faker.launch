@@ -2,7 +2,7 @@
 
   <arg name="id" default="0"/>
   <arg name="ns_prefix" default="uav"/>
-  <arg name="config_file" default="$(find human_aware_collaboration_planner)/config/conf.yaml"/>
+  <arg name="config_file" default="$(find mission_planner)/config/conf.yaml"/>
   <arg name="debugger" default="none"/>
 
   <group ns="$(arg ns_prefix)$(arg id)/battery_faker">
@@ -10,13 +10,13 @@
     <param name="state_topic" value="/$(arg ns_prefix)$(arg id)/ual/state"/>
   </group>
 
-  <node pkg="human_aware_collaboration_planner" type="battery_faker" name="battery_faker" ns="$(arg ns_prefix)$(arg id)"
+  <node pkg="mission_planner" type="battery_faker" name="battery_faker" ns="$(arg ns_prefix)$(arg id)"
     output="screen" if="$(eval debugger=='none')">
     <param name="id" value="$(arg ns_prefix)$(arg id)"/>
     <param name="config_file" value="$(arg config_file)"/>
   </node>
 
-  <node pkg="human_aware_collaboration_planner" type="battery_faker" name="battery_faker" ns="$(arg ns_prefix)$(arg id)"
+  <node pkg="mission_planner" type="battery_faker" name="battery_faker" ns="$(arg ns_prefix)$(arg id)"
     output="screen" launch-prefix="xterm -e gdb -ex 'set print thread-events off' -ex run --args" 
     if="$(eval debugger=='gdb')">
     <param name="id" value="$(arg ns_prefix)$(arg id)"/>

@@ -7,7 +7,7 @@
     <arg name="agent_debugger" default="none"/>
     <arg name="battery_mode" default="recharge_in_base"/>
 
-    <arg name="config_file" default="$(find human_aware_collaboration_planner)/config/conf.yaml"/>
+    <arg name="config_file" default="$(find mission_planner)/config/conf.yaml"/>
 
     <arg name="id" default="0"/>
     <arg name="type" default="ACW"/>
@@ -43,7 +43,7 @@
 
 
     <!-- Launch UAL -->
-    <include file="$(find human_aware_collaboration_planner)/launch/ual.launch">
+    <include file="$(find mission_planner)/launch/ual.launch">
       <arg name="id" value="$(arg id)"/>
       <arg name="robot_model" value="$(arg robot_model)"/>
       <arg name="material" value="$(arg material)"/>
@@ -72,7 +72,7 @@
     </include>
 
     <!-- Launch agent_behavior_manager -->
-    <include file="$(find human_aware_collaboration_planner)/launch/agent.launch">
+    <include file="$(find mission_planner)/launch/agent.launch">
       <arg name="agent_debugger" value="$(arg agent_debugger)"/>
       <arg name="id" value="$(arg id)"/>
       <arg name="ns_prefix" value="$(arg ns_prefix)"/>
@@ -84,7 +84,7 @@
     </include>
 
     <!-- Launch fakers -->
-    <include file="$(find human_aware_collaboration_planner)/launch/fakers.launch">
+    <include file="$(find mission_planner)/launch/fakers.launch">
       <arg name="id" value="$(arg id)"/>
       <arg name="ns_prefix" value="$(arg ns_prefix)"/>
       <arg name="config_file" value="$(arg config_file)"/>

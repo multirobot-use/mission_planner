@@ -16,15 +16,15 @@
 #include "behaviortree_cpp_v3/loggers/bt_file_logger.h"
 #include "behaviortree_cpp_v3/loggers/bt_zmq_publisher.h"
 
-#include "human_aware_collaboration_planner/classes.h"
-#include "human_aware_collaboration_planner/AgentBeacon.h"
-#include "human_aware_collaboration_planner/PlannerBeacon.h"
-#include "human_aware_collaboration_planner/NewTaskListAction.h"
-#include "human_aware_collaboration_planner/BatteryEnoughAction.h"
-#include "human_aware_collaboration_planner/TaskResultAction.h"
-#include "human_aware_collaboration_planner/MissionOver.h"
-#include "human_aware_collaboration_planner/Waypoint.h"
-#include "human_aware_collaboration_planner/Task.h"
+#include "mission_planner/classes.h"
+#include "mission_planner/AgentBeacon.h"
+#include "mission_planner/PlannerBeacon.h"
+#include "mission_planner/NewTaskListAction.h"
+#include "mission_planner/BatteryEnoughAction.h"
+#include "mission_planner/TaskResultAction.h"
+#include "mission_planner/MissionOver.h"
+#include "mission_planner/Waypoint.h"
+#include "mission_planner/Task.h"
 
 #include "uav_abstraction_layer/Land.h"
 #include "uav_abstraction_layer/TakeOff.h"
@@ -535,12 +535,12 @@ class AgentNode
 		geographic_msgs::GeoPoint origin_geo_;
 
     //Action Server to receive TaskList
-    actionlib::SimpleActionServer<human_aware_collaboration_planner::NewTaskListAction> ntl_as_;
-    human_aware_collaboration_planner::NewTaskListFeedback ntl_feedback_;
-    human_aware_collaboration_planner::NewTaskListResult ntl_result_;
+    actionlib::SimpleActionServer<mission_planner::NewTaskListAction> ntl_as_;
+    mission_planner::NewTaskListFeedback ntl_feedback_;
+    mission_planner::NewTaskListResult ntl_result_;
 
     //Action Client to Battery Enough
-    actionlib::SimpleActionClient<human_aware_collaboration_planner::BatteryEnoughAction> battery_ac_;
+    actionlib::SimpleActionClient<mission_planner::BatteryEnoughAction> battery_ac_;
 
     // Subscribers: ual (position), mavros(battery), ual(state), UGV geo position
     ros::Subscriber position_sub_; 
@@ -564,7 +564,7 @@ class AgentNode
 
     // Publishers
     ros::Publisher beacon_pub_;
-    human_aware_collaboration_planner::AgentBeacon beacon_;
+    mission_planner::AgentBeacon beacon_;
     ros::Rate loop_rate_;
 
     std::queue<classes::Task*> task_queue_;
@@ -587,7 +587,7 @@ class AgentNode
     void readEvoraConfigFile(std::string config_file);
 
   public:
-    AgentNode(human_aware_collaboration_planner::AgentBeacon beacon);
+    AgentNode(mission_planner::AgentBeacon beacon);
     ~AgentNode();
 		void isBatteryEnough();
     //Task queue methods
@@ -598,13 +598,13 @@ class AgentNode
     void infoQueue();
 		void taskQueueManager();
     //New Task List Action callback
-    void newTaskList(const human_aware_collaboration_planner::NewTaskListGoalConstPtr& goal);
+    void newTaskList(const mission_planner::NewTaskListGoalConstPtr& goal);
     void positionCallbackUAL(const geometry_msgs::PoseStamped& pose);
     void batteryCallback(const sensor_msgs::BatteryState& battery);
 		void stateCallbackUAL(const uav_abstraction_layer::State& state);
 	
-		void missionOverCallback(const human_aware_collaboration_planner::MissionOver& value);
-		void beaconCallback(const human_aware_collaboration_planner::PlannerBeacon& beacon);
+		void missionOverCallback(const mission_planner::MissionOver& value);
+		void beaconCallback(const mission_planner::PlannerBeacon& beacon);
 		bool checkBeaconTimeout(ros::Time now);
 		void atrvjrPositionCallback(const geographic_msgs::GeoPoseStamped& geo_pose);
 		void jackalPositionCallback(const geographic_msgs::GeoPoseStamped& geo_pose);

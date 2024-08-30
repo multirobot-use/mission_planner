@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>human_aware_collaboration_planner</name>
+  <name>mission_planner</name>
   <version>0.0.0</version>
-  <description>human-aware collanboration planner using behaviors trees</description>
-  <maintainer email="alvarocalvomatos@gmail.com">Alvaro</maintainer>
+  <description>mission planner using behaviors trees</description>
+  <maintainer email="acalvom@us.es">Alvaro</maintainer>
   <license>TODO</license>
 
   <!-- <depend>behaviortree_cpp_v3</depend> -->

@@ -9,7 +9,7 @@
 #include <queue>
 #include <actionlib/client/simple_action_client.h>
 #include <actionlib/server/simple_action_server.h>
-#include "human_aware_collaboration_planner/Waypoint.h"
+#include "mission_planner/Waypoint.h"
 
 namespace classes {
 //Forward declarations
@@ -45,15 +45,15 @@ class Position {
 		~Position();
     void update(float x, float y, float z);
 		friend float distance(Position&, Position&);
-		friend float distance(Position&, human_aware_collaboration_planner::Waypoint&);
-		friend float distance(human_aware_collaboration_planner::Waypoint&, Position&);
+		friend float distance(Position&, mission_planner::Waypoint&);
+		friend float distance(mission_planner::Waypoint&, Position&);
 		friend float distance2D(Position&, Position&);
-		friend float distance2D(Position&, human_aware_collaboration_planner::Waypoint&);
-		friend float distance2D(human_aware_collaboration_planner::Waypoint&, Position&);
+		friend float distance2D(Position&, mission_planner::Waypoint&);
+		friend float distance2D(mission_planner::Waypoint&, Position&);
 		friend Position closePose(Position&, Position&, float);
-		friend Position closePose(Position&, human_aware_collaboration_planner::Waypoint&, float);
+		friend Position closePose(Position&, mission_planner::Waypoint&, float);
 		friend Position closePose2D(Position&, Position&, float);
-		friend Position closePose2D(Position&, human_aware_collaboration_planner::Waypoint&, float);
+		friend Position closePose2D(Position&, mission_planner::Waypoint&, float);
 		//Getters
 		std::string getID();
 		float getX();
@@ -68,18 +68,18 @@ std::ostream& operator << (std::ostream& os, const Position& p) {
 }
 		
 float distance(Position&, Position&);
-float distance(Position&, human_aware_collaboration_planner::Waypoint&);
-float distance(human_aware_collaboration_planner::Waypoint&, Position&);
-float distance(human_aware_collaboration_planner::Waypoint&, human_aware_collaboration_planner::Waypoint&);
+float distance(Position&, mission_planner::Waypoint&);
+float distance(mission_planner::Waypoint&, Position&);
+float distance(mission_planner::Waypoint&, mission_planner::Waypoint&);
 float distance2D(Position&, Position&);
-float distance2D(Position&, human_aware_collaboration_planner::Waypoint&);
-float distance2D(human_aware_collaboration_planner::Waypoint&, Position&);
-float distance2D(human_aware_collaboration_planner::Waypoint&, human_aware_collaboration_planner::Waypoint&);
+float distance2D(Position&, mission_planner::Waypoint&);
+float distance2D(mission_planner::Waypoint&, Position&);
+float distance2D(mission_planner::Waypoint&, mission_planner::Waypoint&);
 Position closePose(Position& orig, Position& dest, float dist);
-Position closePose(Position&, human_aware_collaboration_planner::Waypoint&, float);
+Position closePose(Position&, mission_planner::Waypoint&, float);
 Position closePose2D(Position&, Position&, float);
-Position closePose2D(Position&, human_aware_collaboration_planner::Waypoint&, float);
-human_aware_collaboration_planner::Waypoint central_position(std::vector<human_aware_collaboration_planner::Waypoint>&);
+Position closePose2D(Position&, mission_planner::Waypoint&, float);
+mission_planner::Waypoint central_position(std::vector<mission_planner::Waypoint>&);
 
 class HumanTarget {
   friend class Monitor;
@@ -141,7 +141,7 @@ class Task {
 		virtual float getHeight();
     virtual std::string getUGVID();
 		virtual std::vector<std::string> getAgentList();
-		virtual std::vector<human_aware_collaboration_planner::Waypoint> getInspectWaypoints();
+		virtual std::vector<mission_planner::Waypoint> getInspectWaypoints();
 		virtual Tool getTool();
 		virtual std::string getToolID();
 		virtual const Tool* getToolPtr();
@@ -153,7 +153,7 @@ class Task {
 		virtual float getFinalPercentage();
     virtual void print(std::ostream& os) const;
 		//Setters
-		virtual void setWaypoints(std::vector<human_aware_collaboration_planner::Waypoint> waypoints);
+		virtual void setWaypoints(std::vector<mission_planner::Waypoint> waypoints);
 		virtual void setAgentList(std::vector<std::string> agent_list);
 		virtual void setChargingStation(Position* charging_station);
 		virtual void setInitialPercentage(float initial_percentage);
@@ -210,46 +210,46 @@ class MonitorUGV : public Task {
 
 class Inspect : public Task {
   protected:
-		std::vector<human_aware_collaboration_planner::Waypoint> waypoints_;
+		std::vector<mission_planner::Waypoint> waypoints_;
 		std::vector<std::string> agent_list_;
   public:
     Inspect();
-    Inspect(std::string task_id, std::vector<human_aware_collaboration_planner::Waypoint> waypoints);
-    Inspect(std::string task_id, std::vector<human_aware_collaboration_planner::Waypoint> waypoints, 
+    Inspect(std::string task_id, std::vector<mission_planner::Waypoint> waypoints);
+    Inspect(std::string task_id, std::vector<mission_planner::Waypoint> waypoints, 
 				std::vector<std::string> agent_list);
     Inspect(const Inspect& i);
     ~Inspect();
 		//Getters
     std::string getID();
     char getType();
-		std::vector<human_aware_collaboration_planner::Waypoint> getInspectWaypoints();
+		std::vector<mission_planner::Waypoint> getInspectWaypoints();
 		std::vector<std::string> getAgentList();
     void print(std::ostream& os) const;
 		//Setters
-		void setWaypoints(std::vector<human_aware_collaboration_planner::Waypoint> waypoints);
+		void setWaypoints(std::vector<mission_planner::Waypoint> waypoints);
 		void setAgentList(std::vector<std::string> agent_list);
 		void updateParams(classes::Task* task);
 };
 
 class InspectPVArray : public Task {
   protected:
-		std::vector<human_aware_collaboration_planner::Waypoint> waypoints_;
+		std::vector<mission_planner::Waypoint> waypoints_;
 		std::vector<std::string> agent_list_;
   public:
     InspectPVArray();
-    InspectPVArray(std::string task_id, std::vector<human_aware_collaboration_planner::Waypoint> waypoints);
-    InspectPVArray(std::string task_id, std::vector<human_aware_collaboration_planner::Waypoint> waypoints, 
+    InspectPVArray(std::string task_id, std::vector<mission_planner::Waypoint> waypoints);
+    InspectPVArray(std::string task_id, std::vector<mission_planner::Waypoint> waypoints, 
 				std::vector<std::string> agent_list);
     InspectPVArray(const InspectPVArray& i);
     ~InspectPVArray();
 		//Getters
     std::string getID();
     char getType();
-		std::vector<human_aware_collaboration_planner::Waypoint> getInspectWaypoints();
+		std::vector<mission_planner::Waypoint> getInspectWaypoints();
 		std::vector<std::string> getAgentList();
     void print(std::ostream& os) const;
 		//Setters
-		void setWaypoints(std::vector<human_aware_collaboration_planner::Waypoint> waypoints);
+		void setWaypoints(std::vector<mission_planner::Waypoint> waypoints);
 		void setAgentList(std::vector<std::string> agent_list);
 		void updateParams(classes::Task* task);
 };

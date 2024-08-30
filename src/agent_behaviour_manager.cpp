@@ -1,4 +1,4 @@
-#include "human_aware_collaboration_planner/agent_behaviour_manager.h"
+#include "mission_planner/agent_behaviour_manager.h"
 
 //Behavior Tree structure xml definition: past here the xml code if createTreeFromText function is used
 static const char* behaviour_tree_xml = R"(
@@ -180,9 +180,9 @@ BT::NodeStatus Recharge::tick(){
   classes::Task* task;
   float final_percentage;
 
-  actionlib::SimpleActionClient<human_aware_collaboration_planner::TaskResultAction> task_result_ac_("/" +
+  actionlib::SimpleActionClient<mission_planner::TaskResultAction> task_result_ac_("/" +
       agent_->beacon_.id + "/task_result", true);
-  human_aware_collaboration_planner::TaskResultGoal goal;
+  mission_planner::TaskResultGoal goal;
   
   //Emergency Recharging
   if(agent_->task_queue_.empty())
@@ -639,9 +639,9 @@ BT::NodeStatus MonitorHumanTarget::tick(){
     return BT::NodeStatus::FAILURE;
   }
 
-  actionlib::SimpleActionClient<human_aware_collaboration_planner::TaskResultAction> 
+  actionlib::SimpleActionClient<mission_planner::TaskResultAction> 
     task_result_ac_("/" + agent_->beacon_.id + "/task_result", true);
-  human_aware_collaboration_planner::TaskResultGoal goal;
+  mission_planner::TaskResultGoal goal;
 
   //TODO: Calling Safety Monitoring lower level controllers (faked) 
   ROS_INFO("[MonitorHumanTarget] Calling Lower-level controllers..."); 
@@ -810,9 +810,9 @@ BT::NodeStatus MonitorUGV::tick(){
   }
   float height = task->getHeight();
 
-  actionlib::SimpleActionClient<human_aware_collaboration_planner::TaskResultAction> 
+  actionlib::SimpleActionClient<mission_planner::TaskResultAction> 
     task_result_ac_("/" + agent_->beacon_.id + "/task_result", true);
-  human_aware_collaboration_planner::TaskResultGoal goal;
+  mission_planner::TaskResultGoal goal;
 
   ROS_INFO("[MonitorUGV] Calling Lower-level controllers..."); 
   while(!isHaltRequested())
@@ -870,7 +870,7 @@ BT::NodeStatus GoNearWP::tick(){
   }
   task = agent_->task_queue_.front();
 
-  human_aware_collaboration_planner::Waypoint nearest_wp;
+  mission_planner::Waypoint nearest_wp;
 
   if(task->getType() != 'I' && task->getType() != 'A')
   {
@@ -1001,9 +1001,9 @@ BT::NodeStatus TakeImage::tick(){
     return BT::NodeStatus::FAILURE;
   }
 
-  actionlib::SimpleActionClient<human_aware_collaboration_planner::TaskResultAction> 
+  actionlib::SimpleActionClient<mission_planner::TaskResultAction> 
     task_result_ac_("/" + agent_->beacon_.id + "/task_result", true);
-  human_aware_collaboration_planner::TaskResultGoal goal;
+  mission_planner::TaskResultGoal goal;
 
   //TODO: Calling Inspection lower level controllers (faked) 
   ROS_INFO("[TakeImage] Calling Lower-level controllers...");
@@ -1065,9 +1065,9 @@ BT::NodeStatus InspectPVArray::tick(){
     return BT::NodeStatus::FAILURE;
   }
 
-  actionlib::SimpleActionClient<human_aware_collaboration_planner::TaskResultAction> 
+  actionlib::SimpleActionClient<mission_planner::TaskResultAction> 
     task_result_ac_("/" + agent_->beacon_.id + "/task_result", true);
-  human_aware_collaboration_planner::TaskResultGoal goal;
+  mission_planner::TaskResultGoal goal;
 
   //TODO: Calling Inspection lower level controllers (faked) 
   ROS_INFO("[InspectPVArray] Calling Lower-level controllers...");
@@ -1543,9 +1543,9 @@ BT::NodeStatus DeliverTool::tick(){
   }
   tool_id = task->getToolID();
 
-  actionlib::SimpleActionClient<human_aware_collaboration_planner::TaskResultAction> 
+  actionlib::SimpleActionClient<mission_planner::TaskResultAction> 
     task_result_ac_("/" + agent_->beacon_.id + "/task_result", true);
-  human_aware_collaboration_planner::TaskResultGoal goal;
+  mission_planner::TaskResultGoal goal;
 
   //TODO: Calling Tool Delivery lower level controllers (faked) 
   ROS_INFO("[DeliverTool] Calling Lower-level controllers...");
@@ -2100,7 +2100,7 @@ inline void RegisterNodes(BT::BehaviorTreeFactory& factory){
 }
 
 //AgentNode definition **********************************************************************************************
-AgentNode::AgentNode(human_aware_collaboration_planner::AgentBeacon beacon) : battery_enough_(true), loop_rate_(1),
+AgentNode::AgentNode(mission_planner::AgentBeacon beacon) : battery_enough_(true), loop_rate_(1),
   tool_flag_("none"), timeout_(false), beacon_(beacon), mission_over_(false), state_(0), battery_(0),
   ntl_as_(nh_, "task_list", boost::bind(&AgentNode::newTaskList, this, _1), false),
   battery_ac_("/" + beacon.id + "/battery_enough", true) 
@@ -2129,14 +2129,14 @@ AgentNode::AgentNode(human_aware_collaboration_planner::AgentBeacon beacon) : ba
   ROS_INFO_STREAM("Origin (lat, lon): (" << origin_geo_.latitude << ", " << origin_geo_.longitude << ")");
 
   //Load of config file
-  std::string path = ros::package::getPath("human_aware_collaboration_planner");
+  std::string path = ros::package::getPath("mission_planner");
   //std::string path_evora = ros::package::getPath("ist_use_collaboration_msgs");
   ros::param::param<std::string>("~config_file", config_file_, path + "/config/conf.yaml");
   //ros::param::param<std::string>("~config_file_evora", config_file_evora_, path_evora + "/config/placemarks.yaml");
   readConfigFile(config_file_);
   //readEvoraConfigFile(config_file_evora_);
 
-  beacon_pub_ = nh_.advertise<human_aware_collaboration_planner::AgentBeacon>("/agent_beacon", 1);
+  beacon_pub_ = nh_.advertise<mission_planner::AgentBeacon>("/agent_beacon", 1);
   battery_sub_ = nh_.subscribe(battery_topic_, 1, &AgentNode::batteryCallback, this);
   mission_over_sub_ = nh_.subscribe("/mission_over", 1, &AgentNode::missionOverCallback, this);
   planner_beacon_sub_ = nh_.subscribe("/planner_beacon", 1, &AgentNode::beaconCallback, this);
@@ -2271,7 +2271,7 @@ void AgentNode::readEvoraConfigFile(std::string config_file){
 void AgentNode::isBatteryEnough(){
   bool previous_state = battery_enough_;
   bool empty_queue = task_queue_.empty();
-  human_aware_collaboration_planner::BatteryEnoughGoal goal;
+  mission_planner::BatteryEnoughGoal goal;
   //TODO: isBatteryEnough according to the task, its params, UAV type, UAV pose, current battery, etc
   //********************************************* FAKED *************************************************************
   /*
@@ -2365,9 +2365,9 @@ void AgentNode::taskQueueManager(){
   classes::Task* next_task;
   char next_task_type;
   float initial_percentage;
-  actionlib::SimpleActionClient<human_aware_collaboration_planner::TaskResultAction> task_result_ac_("/" +
+  actionlib::SimpleActionClient<mission_planner::TaskResultAction> task_result_ac_("/" +
       beacon_.id + "/task_result", true);
-  human_aware_collaboration_planner::TaskResultGoal goal;
+  mission_planner::TaskResultGoal goal;
 
   //Check if there are some waiting tasks in the queue
   if(task_queue_.size() < 2)
@@ -2401,7 +2401,7 @@ void AgentNode::taskQueueManager(){
   return;
 }
 //New Task List Action callback
-void AgentNode::newTaskList(const human_aware_collaboration_planner::NewTaskListGoalConstPtr& goal){
+void AgentNode::newTaskList(const mission_planner::NewTaskListGoalConstPtr& goal){
   ROS_INFO("[newTaskList] Received a NewTaskList Action");
   ntl_feedback_.status = "Received a NewTaskList Action";
   ntl_as_.publishFeedback(ntl_feedback_);
@@ -2423,7 +2423,7 @@ void AgentNode::newTaskList(const human_aware_collaboration_planner::NewTaskList
 
     for(int i = 0; i < goal->task_list.size(); ++i)
     {
-      const human_aware_collaboration_planner::Task &task_msg = goal->task_list[i];
+      const mission_planner::Task &task_msg = goal->task_list[i];
       classes::Task* task;
 
       switch(task_msg.type)
@@ -2490,10 +2490,10 @@ void AgentNode::positionCallbackUAL(const geometry_msgs::PoseStamped& pose){
 }
 void AgentNode::batteryCallback(const sensor_msgs::BatteryState& battery){battery_ = battery.percentage;}
 void AgentNode::stateCallbackUAL(const uav_abstraction_layer::State& state){state_ = state.state;}
-void AgentNode::missionOverCallback(const human_aware_collaboration_planner::MissionOver& value){
+void AgentNode::missionOverCallback(const mission_planner::MissionOver& value){
   mission_over_ = value.value;
 }
-void AgentNode::beaconCallback(const human_aware_collaboration_planner::PlannerBeacon& beacon){
+void AgentNode::beaconCallback(const mission_planner::PlannerBeacon& beacon){
   last_beacon_ = beacon.time;
   timeout_ = false;
   beacon_.timeout = false;
@@ -2595,7 +2595,7 @@ int main(int argc, char **argv){
 
   std::string id;
   std::string ns_prefix;
-  human_aware_collaboration_planner::AgentBeacon beacon;
+  mission_planner::AgentBeacon beacon;
 
   //Read AgentBeacon parameters and send AgentBeacon to planner
   ros::param::param<std::string>("~id", id, "0");

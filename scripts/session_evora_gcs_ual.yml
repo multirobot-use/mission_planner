@@ -5,11 +5,11 @@ windows:
   - multimaster:
       layout: even-horizontal
       panes:
-        - roscd human_aware_collaboration_planner/scripts; ./start_multimaster.sh
+        - roscd mission_planner/scripts; ./start_multimaster.sh
   - planner:
       layout: even-horizontal
       panes: 
-        - sleep 10; roslaunch human_aware_collaboration_planner planner.launch
+        - sleep 10; roslaunch mission_planner planner.launch
   # - rtk_station:
   #     layout: even-horizontal
   #     panes: 
@@ -17,9 +17,9 @@ windows:
   - fakers:
       layout: even-horizontal
       panes:
-        - sleep 14; roslaunch human_aware_collaboration_planner fakers.launch battery_faker:=true ist_ugv_faker:=false
+        - sleep 14; roslaunch mission_planner fakers.launch battery_faker:=true ist_ugv_faker:=false
   - cameras:
       layout: even-horizontal
       panes:
-        #- sleep 16; roslaunch human_aware_collaboration_planner camera_experiment.launch id:=2
-        - sleep 16; roslaunch human_aware_collaboration_planner camera_experiment.launch id:=3
+        #- sleep 16; roslaunch mission_planner camera_experiment.launch id:=2
+        - sleep 16; roslaunch mission_planner camera_experiment.launch id:=3

@@ -11,7 +11,7 @@
     <arg name="planner_debugger" default="none"/>
     <arg name="agent_debugger" default="none"/>
 
-    <arg name="config_file" default="$(find human_aware_collaboration_planner)/config/conf.yaml"/>
+    <arg name="config_file" default="$(find mission_planner)/config/conf.yaml"/>
 
     <arg name="ns_prefix" default="uav"/>
     <arg name="ual_server" default="on"/>
@@ -35,19 +35,19 @@
 
 
     <!-- Launch Gazebo simulation -->
-    <include file="$(find human_aware_collaboration_planner)/launch/world.launch" if="$(eval mode=='sitl')">
+    <include file="$(find mission_planner)/launch/world.launch" if="$(eval mode=='sitl')">
       <arg name="world" value="$(arg world)"/>
     </include>
 
     <!-- Launch Planner Node (there's only one node of this type for the whole simulation and it's outside any ns)-->
-    <include file="$(find human_aware_collaboration_planner)/launch/planner.launch">
+    <include file="$(find mission_planner)/launch/planner.launch">
       <arg name="planner_debugger" value="$(arg planner_debugger)"/>
       <arg name="config_file" value="$(arg config_file)"/>
       <arg name="battery_faker" value="$(arg battery_faker)"/>
     </include>
 
     <!-- Launch UAV 1 nodes -->
-    <include file="$(find human_aware_collaboration_planner)/launch/uav.launch" if="$(eval number_UAV >= 1)">
+    <include file="$(find mission_planner)/launch/uav.launch" if="$(eval number_UAV >= 1)">
       <arg name="id" value="1"/>
       <arg name="type" value="PhysicalACW"/>
       <arg name="robot_model" value="mbzirc"/>
@@ -85,7 +85,7 @@
     </include>
 
     <!-- Launch UAV 2 nodes -->
-    <include file="$(find human_aware_collaboration_planner)/launch/uav.launch" if="$(eval number_UAV >= 2)">
+    <include file="$(find mission_planner)/launch/uav.launch" if="$(eval number_UAV >= 2)">
       <arg name="id" value="2"/>
       <arg name="type" value="InspectionACW"/>
       <arg name="robot_model" value="mbzirc"/>
@@ -123,7 +123,7 @@
     </include>
 
     <!-- Launch UAV 3 nodes -->
-    <include file="$(find human_aware_collaboration_planner)/launch/uav.launch" if="$(eval number_UAV >= 3)">
+    <include file="$(find mission_planner)/launch/uav.launch" if="$(eval number_UAV >= 3)">
       <arg name="id" value="3"/>
       <arg name="type" value="SafetyACW"/>
       <arg name="robot_model" value="mbzirc"/>
@@ -161,7 +161,7 @@
     </include>
 
     <!-- Launch UAV 4 nodes -->
-    <include file="$(find human_aware_collaboration_planner)/launch/uav.launch" if="$(eval number_UAV >= 4)">
+    <include file="$(find mission_planner)/launch/uav.launch" if="$(eval number_UAV >= 4)">
       <arg name="id" value="4"/>
       <arg name="type" value="SafetyACW"/>
       <arg name="robot_model" value="mbzirc"/>
@@ -199,7 +199,7 @@
     </include>
 
     <!-- Launch UAV 5 nodes -->
-    <include file="$(find human_aware_collaboration_planner)/launch/uav.launch" if="$(eval number_UAV >= 5)">
+    <include file="$(find mission_planner)/launch/uav.launch" if="$(eval number_UAV >= 5)">
       <arg name="id" value="5"/>
       <arg name="type" value="SafetyACW"/>
       <arg name="robot_model" value="mbzirc"/>

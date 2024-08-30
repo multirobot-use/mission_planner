@@ -1,24 +1,24 @@
 #include "ros/ros.h"
 #include <cstdlib>
 #include <actionlib/client/simple_action_client.h>
-#include "human_aware_collaboration_planner/NewTaskAction.h"
-#include "human_aware_collaboration_planner/Waypoint.h"
+#include "mission_planner/NewTaskAction.h"
+#include "mission_planner/Waypoint.h"
 
 /*
  * FUNCTION CALL PROTOTIPES:
- * rosrun human_aware_collaboration_planner gesture_recognition_faker id task_type params
+ * rosrun mission_planner gesture_recognition_faker id task_type params
  *
  * SAFETY MONITORING:
- * rosrun human_aware_collaboration_planner gesture_recognition_faker task_id m human_target_id distance number
+ * rosrun mission_planner gesture_recognition_faker task_id m human_target_id distance number
  *
  * INSPECTION:
- * rosrun human_aware_collaboration_planner gesture_recognition_faker task_id i x y z
- * rosrun human_aware_collaboration_planner gesture_recognition_faker task_id i x y z x y z
- * rosrun human_aware_collaboration_planner gesture_recognition_faker task_id i x y z x y z x y z
- * rosrun human_aware_collaboration_planner gesture_recognition_faker task_id i x y z x y z x y z x y z...
+ * rosrun mission_planner gesture_recognition_faker task_id i x y z
+ * rosrun mission_planner gesture_recognition_faker task_id i x y z x y z
+ * rosrun mission_planner gesture_recognition_faker task_id i x y z x y z x y z
+ * rosrun mission_planner gesture_recognition_faker task_id i x y z x y z x y z x y z...
  *
  * TOOL DELIVERY:
- * rosrun human_aware_collaboration_planner gesture_recognition_faker task_id d tool_id human_target_id
+ * rosrun mission_planner gesture_recognition_faker task_id d tool_id human_target_id
  *
  */
 
@@ -30,10 +30,10 @@ int main(int argc, char **argv)
   ros::init(argc, argv, "gesture_recognition_faker_" + task_id);
 
   //Action client to send new task
-  actionlib::SimpleActionClient<human_aware_collaboration_planner::NewTaskAction> nt_ac("incoming_task_action", true);
+  actionlib::SimpleActionClient<mission_planner::NewTaskAction> nt_ac("incoming_task_action", true);
   nt_ac.waitForServer(ros::Duration(10.0));
 
-  human_aware_collaboration_planner::NewTaskGoal goal;
+  mission_planner::NewTaskGoal goal;
   bool error = 1;
   int i;
 
@@ -68,7 +68,7 @@ int main(int argc, char **argv)
         i = 3;
         while(i + 2 < argc)
         {
-          human_aware_collaboration_planner::Waypoint waypoint;
+          mission_planner::Waypoint waypoint;
           waypoint.x = atof(argv[i]);
           waypoint.y = atof(argv[i+1]);
           waypoint.z = atof(argv[i+2]);
@@ -84,7 +84,7 @@ int main(int argc, char **argv)
         i = 3;
         while(i + 2 < argc)
         {
-          human_aware_collaboration_planner::Waypoint waypoint;
+          mission_planner::Waypoint waypoint;
           waypoint.x = atof(argv[i]);
           waypoint.y = atof(argv[i+1]);
           waypoint.z = atof(argv[i+2]);

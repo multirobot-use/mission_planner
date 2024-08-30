@@ -1,4 +1,4 @@
-#include "human_aware_collaboration_planner/classes.h"
+#include "mission_planner/classes.h"
 
 using namespace classes;
 
@@ -27,15 +27,15 @@ float classes::distance(Position& p1, Position& p2){
   return sqrt(pow(p1.x_ - p2.x_, 2) + pow(p1.y_ - p2.y_, 2) + pow(p1.z_ - p2.z_, 2));
 }
 
-float classes::distance(Position& p1, human_aware_collaboration_planner::Waypoint& p2){
+float classes::distance(Position& p1, mission_planner::Waypoint& p2){
   return sqrt(pow(p1.x_ - p2.x, 2) + pow(p1.y_ - p2.y, 2) + pow(p1.z_ - p2.z, 2));
 }
 
-float classes::distance(human_aware_collaboration_planner::Waypoint& p1, Position& p2){
+float classes::distance(mission_planner::Waypoint& p1, Position& p2){
   return sqrt(pow(p1.x - p2.x_, 2) + pow(p1.y - p2.y_, 2) + pow(p1.z - p2.z_, 2));
 }
 
-float classes::distance(human_aware_collaboration_planner::Waypoint& p1, human_aware_collaboration_planner::Waypoint& p2){
+float classes::distance(mission_planner::Waypoint& p1, mission_planner::Waypoint& p2){
   return sqrt(pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2) + pow(p1.z - p2.z, 2));
 }
 
@@ -43,15 +43,15 @@ float classes::distance2D(Position& p1, Position& p2){
   return sqrt(pow(p1.x_ - p2.x_, 2) + pow(p1.y_ - p2.y_, 2));
 }
 
-float classes::distance2D(Position& p1, human_aware_collaboration_planner::Waypoint& p2){
+float classes::distance2D(Position& p1, mission_planner::Waypoint& p2){
   return sqrt(pow(p1.x_ - p2.x, 2) + pow(p1.y_ - p2.y, 2));
 }
 
-float classes::distance2D(human_aware_collaboration_planner::Waypoint& p1, Position& p2){
+float classes::distance2D(mission_planner::Waypoint& p1, Position& p2){
   return sqrt(pow(p1.x - p2.x_, 2) + pow(p1.y - p2.y_, 2));
 }
 
-float classes::distance2D(human_aware_collaboration_planner::Waypoint& p1, human_aware_collaboration_planner::Waypoint& p2){
+float classes::distance2D(mission_planner::Waypoint& p1, mission_planner::Waypoint& p2){
   return sqrt(pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2));
 }
 
@@ -64,7 +64,7 @@ Position classes::closePose(Position& orig, Position& dest, float dist){
   return Position(x, y, z);
 }
 
-Position classes::closePose(Position& orig, human_aware_collaboration_planner::Waypoint& dest, float dist){
+Position classes::closePose(Position& orig, mission_planner::Waypoint& dest, float dist){
   float mod = sqrt(pow(orig.x_ - dest.x, 2) + pow(orig.y_ - dest.y, 2) + pow(orig.z_ - dest.z, 2));
   float x = dest.x + dist*(orig.x_ - dest.x)/mod;
   float y = dest.y + dist*(orig.y_ - dest.y)/mod;
@@ -82,7 +82,7 @@ Position classes::closePose2D(Position& orig, Position& dest, float dist){
   return Position(x, y, z);
 }
 
-Position classes::closePose2D(Position& orig, human_aware_collaboration_planner::Waypoint& dest, float dist){
+Position classes::closePose2D(Position& orig, mission_planner::Waypoint& dest, float dist){
   float mod = sqrt(pow(orig.x_ - dest.x, 2) + pow(orig.y_ - dest.y, 2));
   float x = dest.x + dist*(orig.x_ - dest.x)/mod;
   float y = dest.y + dist*(orig.y_ - dest.y)/mod;
@@ -91,8 +91,8 @@ Position classes::closePose2D(Position& orig, human_aware_collaboration_planner:
   return Position(x, y, z);
 }
 
-human_aware_collaboration_planner::Waypoint classes::central_position(std::vector<human_aware_collaboration_planner::Waypoint>& waypoints){
-  human_aware_collaboration_planner::Waypoint central_position;
+mission_planner::Waypoint classes::central_position(std::vector<mission_planner::Waypoint>& waypoints){
+  mission_planner::Waypoint central_position;
 
   central_position.x = 0;
   central_position.y = 0;
@@ -158,8 +158,8 @@ int Task::getNumber(){return 0;}
 float Task::getHeight(){return 0;}
 std::string Task::getUGVID(){return "";}
 std::vector<std::string> Task::getAgentList(){return std::vector<std::string>();}
-std::vector<human_aware_collaboration_planner::Waypoint> Task::getInspectWaypoints(){
-  return std::vector<human_aware_collaboration_planner::Waypoint>();
+std::vector<mission_planner::Waypoint> Task::getInspectWaypoints(){
+  return std::vector<mission_planner::Waypoint>();
 }
 Tool Task::getTool(){return Tool();}
 std::string Task::getToolID(){return "";}
@@ -175,7 +175,7 @@ void Task::print(std::ostream& os) const{
   return;
 }
 //Class Task Setters
-void Task::setWaypoints(std::vector<human_aware_collaboration_planner::Waypoint> waypoints){return;}
+void Task::setWaypoints(std::vector<mission_planner::Waypoint> waypoints){return;}
 void Task::setAgentList(std::vector<std::string> agent_list){return;}
 void Task::setChargingStation(Position* charging_station){return;}
 void Task::setInitialPercentage(float initial_percentage){return;}
@@ -249,16 +249,16 @@ void MonitorUGV::updateParams(classes::Task* task){
 
 //class Inspect : public Task
 Inspect::Inspect() : Task() {}
-Inspect::Inspect(std::string task_id, std::vector<human_aware_collaboration_planner::Waypoint> waypoints) : 
+Inspect::Inspect(std::string task_id, std::vector<mission_planner::Waypoint> waypoints) : 
   Task(task_id), waypoints_(waypoints) {}
-Inspect::Inspect(std::string task_id, std::vector<human_aware_collaboration_planner::Waypoint> waypoints, 
+Inspect::Inspect(std::string task_id, std::vector<mission_planner::Waypoint> waypoints, 
     std::vector<std::string> agent_list) : Task(task_id), waypoints_(waypoints), agent_list_(agent_list) {}
 Inspect::Inspect(const Inspect& i) : Task(i.id_), waypoints_(i.waypoints_), agent_list_(i.agent_list_) {}
 Inspect::~Inspect(){}
 //class Inspect Getters
 std::string Inspect::getID(){return id_;}
 char Inspect::getType(){return 'I';}
-std::vector<human_aware_collaboration_planner::Waypoint> Inspect::getInspectWaypoints(){return waypoints_;}
+std::vector<mission_planner::Waypoint> Inspect::getInspectWaypoints(){return waypoints_;}
 std::vector<std::string> Inspect::getAgentList(){return agent_list_;}
 void Inspect::print(std::ostream& os) const{
   os << "\t" << id_ << ": Inspect\n\t\tPositions:";
@@ -270,7 +270,7 @@ void Inspect::print(std::ostream& os) const{
   return;
 }
 //Class Inspect Setters
-void Inspect::setWaypoints(std::vector<human_aware_collaboration_planner::Waypoint> waypoints){
+void Inspect::setWaypoints(std::vector<mission_planner::Waypoint> waypoints){
   waypoints_ = waypoints;
   return;
 }
@@ -286,16 +286,16 @@ void Inspect::updateParams(classes::Task* task){
 
 //class InspectPVArray : public Task
 InspectPVArray::InspectPVArray() : Task() {}
-InspectPVArray::InspectPVArray(std::string task_id, std::vector<human_aware_collaboration_planner::Waypoint> waypoints) : 
+InspectPVArray::InspectPVArray(std::string task_id, std::vector<mission_planner::Waypoint> waypoints) : 
   Task(task_id), waypoints_(waypoints) {}
-InspectPVArray::InspectPVArray(std::string task_id, std::vector<human_aware_collaboration_planner::Waypoint> waypoints, 
+InspectPVArray::InspectPVArray(std::string task_id, std::vector<mission_planner::Waypoint> waypoints, 
     std::vector<std::string> agent_list) : Task(task_id), waypoints_(waypoints), agent_list_(agent_list) {}
 InspectPVArray::InspectPVArray(const InspectPVArray& i) : Task(i.id_), waypoints_(i.waypoints_), agent_list_(i.agent_list_) {}
 InspectPVArray::~InspectPVArray(){}
 //class InspectPVArray Getters
 std::string InspectPVArray::getID(){return id_;}
 char InspectPVArray::getType(){return 'A';}
-std::vector<human_aware_collaboration_planner::Waypoint> InspectPVArray::getInspectWaypoints(){return waypoints_;}
+std::vector<mission_planner::Waypoint> InspectPVArray::getInspectWaypoints(){return waypoints_;}
 std::vector<std::string> InspectPVArray::getAgentList(){return agent_list_;}
 void InspectPVArray::print(std::ostream& os) const{
   os << "\t" << id_ << ": InspectPVArray\n\t\tPositions:";
@@ -307,7 +307,7 @@ void InspectPVArray::print(std::ostream& os) const{
   return;
 }
 //Class InspectPVArray Setters
-void InspectPVArray::setWaypoints(std::vector<human_aware_collaboration_planner::Waypoint> waypoints){
+void InspectPVArray::setWaypoints(std::vector<mission_planner::Waypoint> waypoints){
   waypoints_ = waypoints;
   return;
 }

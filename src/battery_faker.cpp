@@ -5,8 +5,8 @@
 #include <string>
 #include <map>
 
-#include "human_aware_collaboration_planner/classes.h"
-#include "human_aware_collaboration_planner/BatteryControl.h"
+#include "mission_planner/classes.h"
+#include "mission_planner/BatteryControl.h"
 
 #include "uav_abstraction_layer/State.h"
 #include "geometry_msgs/PoseStamped.h"
@@ -53,7 +53,7 @@ class BatteryFaker{
       ros::param::param<std::string>("~state_topic", state_topic_, "/" + id_ + "/ual/state");
 
       //load of known position and human targets known positions
-      std::string path = ros::package::getPath("human_aware_collaboration_planner");
+      std::string path = ros::package::getPath("mission_planner");
       ros::param::param<std::string>("~config_file", config_file, path + "/config/conf.yaml");
 
       ROS_INFO("Reading config file...");
@@ -172,7 +172,7 @@ class BatteryFaker{
       }
     }
     //Callbacks
-    void controlCallback(const human_aware_collaboration_planner::BatteryControl& control){
+    void controlCallback(const mission_planner::BatteryControl& control){
       if(control.percentage != -1)
         battery_.percentage = control.percentage;
       mode_ = control.mode;

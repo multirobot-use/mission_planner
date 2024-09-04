@@ -1,13 +1,6 @@
-% Define the route to the workspace containing the needed package
-folderpath = 'path_to_your_catkin_ws/src';  % Cambia esta ruta a la ubicación de tu paquete
-folderpath = fullfile('planning_workspace','src');
-
-% Generar los archivos de mensajes personalizados
-rosgenmsg(folderpath);
-
-% Agregar la carpeta generada al path de MATLAB
-addpath('path_to_your_catkin_ws/src/install/m');
-savepath;
+cd ../..
+packagePathPwd = pwd;
+return;
 
 %%%%%%%%%%%%%%%
 [~, packagePath] = system(['rospack find ', 'mission_planner']);
@@ -33,54 +26,68 @@ addpath(generatedPath);
 savepath; % Guarda el nuevo path para futuras sesiones
 
 disp('Mensajes personalizados de ROS configurados correctamente en MATLAB.');
+return;
 
 %%%%%%%%%%%%%%%%%%
-% Iniciar script de inicialización para mensajes de ROS en MATLAB
-
-% Paso 1: Obtener la ruta del ROS_PACKAGE_PATH desde el entorno de ROS
+% ROS messages initialization script
+% Step 1: get the path of the ROS package from the ROS environment
 rosPackagePath = getenv('ROS_PACKAGE_PATH');
 
-% Verificar si se ha encontrado el ROS_PACKAGE_PATH
+% Verify if ROS_PACKAGE_PATH has been found
 if isempty(rosPackagePath)
-    error('No se ha encontrado la variable de entorno ROS_PACKAGE_PATH. Asegúrate de que ROS esté configurado correctamente.');
+    error('The environment variable ROS_PACKAGE_PATH hasn''t been found');
 end
 
-% Separar las posibles múltiples rutas en ROS_PACKAGE_PATH
+% Split the possible different routes in the ros package path
 packagePaths = strsplit(rosPackagePath, pathsep);
 
-% Paso 2: Buscar la ruta del paquete que contiene los mensajes personalizados
-% Modifica el nombre del paquete a buscar según tus necesidades
-packageName = 'mission_planner'; % Cambia esto al nombre de tu paquete con mensajes personalizados
+% Step 2: Search the route of the mission_planner package
+packageName = 'mission_planner';
 packagePath = '';
 
-% Iterar sobre las rutas para encontrar la del paquete deseado
+% Paths iteration search
 for i = 1:length(packagePaths)
-    % Intentar encontrar el paquete usando rospack find (requiere que ROS esté en el sistema PATH)
+    %? Intentar encontrar el paquete usando rospack find (requiere que ROS esté en el sistema PATH)
     [status, cmdout] = system(['rospack find ', packageName]);
     
-    % Verificar si se encontró la ruta del paquete
+    % Verify if the package path has been found
     if status == 0
-        packagePath = strtrim(cmdout); % Remover espacios en blanco
+        packagePath = strtrim(cmdout);
         break;
     end
 end
 
-% Verificar si se encontró el paquete
+% Verify if the package has been found
 if isempty(packagePath)
-    error(['No se ha encontrado el paquete ', packageName, '. Asegúrate de que el paquete está en tu workspace de ROS y configurado correctamente.']);
+    error([packageName, ' package hasn''t been found.']);
 end
 
-% Paso 3: Generar los mensajes personalizados
+% Step 3: Generate ROS messages for matlab
 try
-    disp('Generando mensajes personalizados de ROS para MATLAB...');
+    disp('Generating ROS message files for Matlab...');
     rosgenmsg(packagePath);
 catch ME
-    error('Error al generar los mensajes personalizados de ROS: %s', ME.message);
+    error('Error while generating ROS messages: %s', ME.message);
 end
 
-% Paso 4: Agregar la carpeta generada al path de MATLAB
-generatedPath = fullfile(packagePath, 'matlab_msg_gen', 'ros', '+mission_planner'); % Ajusta según sea necesario
+% Step 4: Add the new messages folder to the Matlab's path
+generatedPath = fullfile(packagePath, '+mission_planner');
 addpath(generatedPath);
-savepath; % Guarda el nuevo path para futuras sesiones
+savepath;
 
-disp('Mensajes personalizados de ROS configurados correctamente en MATLAB.');
+disp('ROS messages setted up successfuly');
+disp('Remember to clone and add git@github.com:multirobot-use/task_planner.git to the path')
+
+
+
+Error using ros.internal.Parsing.validateFolderPath
+The folder path, /home/baldman/grvc_planning_workspace/src/grvc_planning_core/ros_packages/mission_planner
+, is invalid or the folder does not exist.
+
+Error in rosgenmsg (line 115)
+    folderPath = ros.internal.Parsing.validateFolderPath(folderPath);
+ 
+>> rosgenmsg(packagePathPwd);
+Error using rosgenmsg
+Unable to find packages with '.msg' files, or '.srv' files, or '.action' files in /home/baldman/git/mission_planner. Each message package must contain '.msg' files in a directory named 'msg', or '.srv' files in
+a directory named 'srv', or '.action' files in a directory named 'action', or a combination of any of these directories.

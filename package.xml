@@ -13,7 +13,7 @@
   <depend>roscpp</depend>
   <depend>std_msgs</depend>
   <depend>yaml-cpp</depend>
-  <depend>ist_use_collaboration_msgs</depend>
+  <!-- <depend>ist_use_collaboration_msgs</depend> -->
   <depend>geographic_msgs</depend>
   <depend>sensor_msgs</depend>
 

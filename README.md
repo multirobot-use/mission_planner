@@ -1,5 +1,7 @@
 # Human-Aware Collaboration Planner
+
 ## Overview
+
 This repository is about a cognitive task planner in charge of planning missions and governing the behaviour of multi-UAV teams carrying out inspection and maintenance tasks jointly with human operators.
 
 The system is designed to ensure the safety of both airborne equipment and human workers at all times.
@@ -12,10 +14,10 @@ simulation. Real controllers will be inplemented in the next layer of the multi-
 
 This software is currently being developed on Ubuntu 18.04 with ROS Melodic.
 
-
 A more detailed description of the system can be found [here](https://www.researchgate.net/publication/360514763_Mission_Planning_and_Execution_in_Heterogeneous_Teams_of_Aerial_Robots_supporting_Power_Line_Inspection_Operations).
 
 If you are using this software layer or you found this approach inspiring for your own research, please cite:
+
 ```bibtex
 @INPROCEEDINGS{CalvoICUAS22,  
   author        = {Calvo, Alvaro and Silano, Giuseppe and Capitan, Jesus},  
@@ -28,11 +30,12 @@ If you are using this software layer or you found this approach inspiring for yo
 ```
 
 ## Installation
+
 To install the repositories correctly, you have to follow the next steps:
 
 0.1. ROS Melodic installation
 
-```
+```bash
 sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
 curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
 sudo apt update
@@ -46,7 +49,7 @@ rosdep update
 
 0.2. (Recomended) Catkin tools
 
-```
+```bash
 sudo sh \
     -c 'echo "deb http://packages.ros.org/ros/ubuntu `lsb_release -sc` main" \
         > /etc/apt/sources.list.d/ros-latest.list'
@@ -57,7 +60,7 @@ sudo apt-get install -y python-catkin-tools
 
 1. Install necessary packages
 
-```
+```bash
 sudo apt install -y libeigen3-dev ros-melodic-geodesy ros-melodic-joy ros-melodic-multimaster-fkie
 pip install pynput
 sudo apt install -y xz-utils
@@ -65,7 +68,7 @@ sudo apt install -y xz-utils
 
 2. Create a ROS workspace
 
-```
+```bash
 mkdir -p ~/mission_planner_ws/src
 cd ~/mission_planner_ws/
 catkin build -DPYTHON_EXECUTABLE=/usr/bin/python
@@ -75,7 +78,7 @@ echo "source $HOME/mission_planner_ws/devel/setup.bash" >> ~/.bashrc
 
 3. Clone necessary repositories
 
-```
+```bash
 cd ~/mission_planner_ws/src/
 
 git clone https://github.com/ctu-mrs/aerialcore_simulation.git
@@ -87,7 +90,7 @@ git clone https://github.com/grvcTeam/grvc-utils.git
 
 4. Clone the necessary packages, which are: grvc-ual, grvc-utils, BehaviorTree.CPP, Groot
 
-```
+```bash
 git clone https://github.com/ctu-mrs/aerialcore_simulation.git
 git clone https://github.com/Angel-M-Montes/path_planner.git
 git clone https://github.com/grvcTeam/grvc-ual
@@ -98,21 +101,21 @@ git clone https://github.com/BehaviorTree/Groot.git
 
 5. Ignore some packages
 
-```
+```bash
 touch ~/mission_planner_ws/src/aerialcore_planning/large_scale_inspection_planner/CATKIN_IGNORE
 touch ~/mission_planner_ws/src/grvc-utils/mission_lib/CATKIN_IGNORE
 ```
 
 6. Install BehaviorTree.CPP package and its dependencies
 
-```
+```bash
 sudo apt-get install -y libzmq3-dev libboost-dev
 sudo apt-get install -y ros-melodic-behaviortree-cpp-v3
 ```
 
 7. Install Groot and its dependencies
 
-```
+```bash
 cd ~/mission_planner_ws/src/
 sudo apt install -y qtbase5-dev libqt5svg5-dev libzmq3-dev libdw-dev
 git clone https://github.com/BehaviorTree/Groot.git
@@ -124,14 +127,14 @@ catkin build
 
 8. Install and configure UAL. Only MAVROS needed. Make sure to install its dependencies when asked
 
-```
+```bash
 cd ~/mission_planner_ws/src/grvc-ual
 ./configure.py
 ```
 
 9. Install MAVROS packages
 
-```
+```bash
 sudo apt install -y ros-melodic-mavros ros-melodic-mavros-extras
 sudo geographiclib-get-geoids egm96-5
 sudo usermod -a -G dialout $USER
@@ -140,7 +143,7 @@ sudo apt remove modemmanager
 
 10.1 (Optional) Install RealSense plugins for real-life execution
 
-```
+```bash
 sudo apt install -y ros-melodic-realsense2-camera ros-melodic-realsense2-description
 ```
 
@@ -148,13 +151,13 @@ sudo apt install -y ros-melodic-realsense2-camera ros-melodic-realsense2-descrip
 
 10.3 (Optional) Give permissions to read the data from the RealSense camera
 
-```
+```bash
 sudo cp 99-realsense-libusb.rules /etc/udev/rules.d/99-realsense-libusb.rules
 ```
 
 11. Install PX4 for SITL simulations
 
-```
+```bash
 sudo apt install -y libgstreamer1.0-dev python-jinja2 python-pip
 pip install numpy toml
 cd ~/mission_planner_ws/src/
@@ -168,12 +171,22 @@ make px4_sitl_default gazebo
 
 12. Build
 
-```
+```bash
 cd ~/mission_planner_ws/
 catkin build
 ```
 
 **Note**: In case that the installation did not go well, try compile each package individually.
+
+13. Matlab setup
+
+To set up Matlab-ROS connection we need to open Matlab as admin (in order to be able to save Matlab's path) and then run the [gen_matlab_msgs](scripts/gen_matlab_msgs.m) script.
+
+```bash
+roscd mission_planner
+cd scripts
+sudo matlab -nodisplay -nosplash -r "gen_matlab_msgs; exit"
+```
 
 ## Test
 

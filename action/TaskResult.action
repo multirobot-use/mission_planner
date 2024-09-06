@@ -4,7 +4,6 @@
 
 Task task
 uint8 result
-#mission_planner/DoCloserInspectionGoal do_closer_inspection
 DoCloserInspectionGoal do_closer_inspection
 ---
 bool ack

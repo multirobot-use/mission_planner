@@ -2,8 +2,8 @@
 cd ../action
 
 % Make a new folder and move dependent actions inside it
-mkdir compile_later
-mv TaskResult.action compile_later/TaskResult.action
+mkdir('compile_later');
+movefile('TaskResult.action', 'compile_later/TaskResult.action');
 
 % Go to the folder above the package's folder (it doesn't need to be workspace's src folder)
 cd ../..
@@ -28,10 +28,10 @@ rehash toolboxcache
 
 % Move the dependent action files back to the action folder
 cd mission_planner/action
-mv compile_later/TaskResult.action TaskResult.action
+movefile('compile_later/TaskResult.action', 'TaskResult.action');
 
 % Remove auxiliary folder
-rmdir compile_later
+rmdir('compile_later');
 
 % Go to the folder above the package's folder (it doesn't need to be workspace's src folder)
 cd ../..

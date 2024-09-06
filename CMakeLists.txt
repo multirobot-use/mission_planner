@@ -40,8 +40,8 @@ add_message_files(
   RechargeParams.msg
   WaitParams.msg
   Task.msg
-  HumanTarget.msg
   Position.msg
+  HumanTarget.msg
   Tool.msg
   BatteryControl.msg
   MissionOver.msg
@@ -57,10 +57,11 @@ add_action_files(
   NewTask.action 
   NewTaskList.action
   BatteryEnough.action
-  TaskResult.action
   # File from the old ist_use_collaboration_msgs package
   RequestMobileChargingStation.action
   DoCloserInspection.action
+  # Moved Task result after DoCloseInspection as it depends on it.
+  TaskResult.action
 )
 
 # 6. Invoke message/service/action generation (generate_messages())

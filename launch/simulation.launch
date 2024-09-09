@@ -23,8 +23,8 @@
     <arg name="position_th" default="0.33"/>
     <arg name="orientation_th" default="0.65"/>
     <arg name="hold_pose_time" default="3.0"/>
-    <arg name="max_horizontal_velocity" default="1.6"/>
-    <arg name="max_vertical_velocity" default="1.2"/>
+    <arg name="max_horizontal_velocity" default="5"/>
+    <arg name="max_vertical_velocity" default="5"/>
     <arg name="max_yaw_rate" default="1.0"/>
     <arg name="max_position_error" default="0.1"/>
     <arg name="max_orientation_error" default="0.01"/>

@@ -39,6 +39,7 @@ add_message_files(
   DeliverToolParams.msg
   RechargeParams.msg
   WaitParams.msg
+  GenericTaskParams.msg
   Task.msg
   Position.msg
   HumanTarget.msg
@@ -62,6 +63,7 @@ add_action_files(
   DoCloserInspection.action
   # Moved Task result after DoCloseInspection as it depends on it.
   TaskResult.action
+  HeuristicPlanning.action
 )
 
 # 6. Invoke message/service/action generation (generate_messages())

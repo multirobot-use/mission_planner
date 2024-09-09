@@ -1,0 +1,10 @@
+# Goal definition
+string scenario_id
+string[] available_agents
+string[] remaining_tasks
+---
+# Result definition
+NewTaskListGoal[] planning_result
+---
+# Feedback definition
+string status

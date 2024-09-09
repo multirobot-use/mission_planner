@@ -5,6 +5,7 @@
 #type D/d   ->  Deliver
 #type R/r   ->  Recharge
 #type W/w   ->  Wait
+#type G/g   ->  Generic
 
 string id
 uint8 type
@@ -14,3 +15,4 @@ InspectParams inspect
 DeliverToolParams deliver
 RechargeParams recharge
 WaitParams wait
+GenericTaskParams generic

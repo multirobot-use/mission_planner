@@ -982,7 +982,8 @@ void Agent::print(std::ostream& os){
 
 //Planner definitions
 Planner::Planner(mission_planner::PlannerBeacon beacon) : 
-  nt_as_(nh_, "incoming_task_action", boost::bind(&Planner::incomingTask, this, _1), false), 
+  nt_as_(nh_, "incoming_task_action", boost::bind(&Planner::incomingTask, this, _1), false),
+  hp_ac_("/heuristic_planning", true), 
   beacon_rate_(1), beacon_(beacon), mission_over_(false)
 {
   nt_as_.start();
@@ -1304,7 +1305,7 @@ void Planner::beaconCallback(const mission_planner::AgentBeacon::ConstPtr& beaco
   }
   else
   {
-    //Reiniciar timeout del heartbeat
+    // Reboot heartbeat timeout
     agent_map_[beacon->id].setLastBeaconTime(ros::Time::now());
 
     if(!beacon->timeout && agent_map_[beacon->id].getLastBeaconTimeout())
@@ -1322,19 +1323,81 @@ void Planner::missionOverCallback(const mission_planner::MissionOver& value){mis
 
 //Method to reasign all not finished tasks
 void Planner::performTaskAllocation(){
+  hp_ac_.waitForServer(ros::Duration(1.0));
+  
+  // Create an action goal message
+  mission_planner::HeuristicPlanningGoal goal;
+  
+  // Fill the goal message
+  for (auto &agent : agent_map_)
+    goal.available_agents.push_back(agent.first);
+
+  for (auto &task : pending_tasks_)
+    goal.remaining_tasks.push_back(task.first);
+
+  // Send goal to the action server
+  hp_ac_.sendGoal(goal);
+
+  // Wait for the results
+  if (hp_ac_.waitForResult(ros::Duration(10.0)))
+  {
+    // Read the results
+    mission_planner::HeuristicPlanningResultConstPtr result = hp_ac_.getResult();
+
+    // If the mission planning succeeded
+    if (result->success)
+    {
+      // Loop through the map, set the auxiliary queue and empty agents' queue
+      for (auto &agent : agent_map_)
+      {
+        agent.second.setOldTaskQueue();
+        agent.second.emptyTheQueue();
+      }
+
+      // Read every task queue from the results and copy them in the agent map
+      for (auto &queue : result->planning_result)
+      {
+        auto agent = queue.agent_id;
+        for (auto &task : queue.task_queue)
+        {
+          agent_map_[agent].addTaskToQueue(pending_tasks_[task]);
+        }
+      }
+
+      // Print the results
+      ROS_INFO("[performTaskAllocation] Tasks Allocated:");
+      for (auto &agent : agent_map_)
+        ROS_INFO_STREAM("[performTaskAllocation] " << agent.second);
+
+      // Loop through the map and send the new queues to agents
+      for (auto &agent : agent_map_)
+        agent.second.sendQueueToAgent();
+
+      // Delete no Typed Tasks from agents old queues for good use of memory
+      for (auto &agent : agent_map_)
+        agent.second.deleteOldTaskQueue();
+    }
+    else
+      ROS_WARN("[performTaskAllocation] No Agents connected yet. %lu pending tasks", pending_tasks_.size());
+  }
+  else
+    ROS_WARN("[performTaskAllocation] Timeout reached");
+
+  return;
+  // Old code:
   //TODO: This is a simplified version. Random heuristic methods should be included.
-  //TODO: Recharge tasks should be included too in the plans. Need something to sinchonise all plans.
+  //TODO: Recharge tasks should be included too in the plans. Need something to synchronize all plans.
   /* Task priority order will be inherent to task type and therefore, it will be hardcoded.
    * As I haven't read anywhere the priority order specifications:
    *    Deliver tasks will have the highest priority.
    *    Inspection tasks will be in second place.
    *    Monitor tasks will be the least priority.
    * 
-   * Also, Agent type will be considered in order to asign tasks. Priority will be more important
+   * Also, Agent type will be considered in order to assign tasks. Priority will be more important
    * than Agent type but if an Agent can't perform a task due to it's type, that task will wait.
    *
    * Monitor tasks will never end, once they are send, only the end of the mission, another
-   * task with the same task ID, the retrear of the Human Target or a specific order to stop
+   * task with the same task ID, the retreat of the Human Target or a specific order to stop
    * monitoring will stop this task. Also, a Recharge task could postpone this task.
    */
 
@@ -1358,11 +1421,11 @@ void Planner::performTaskAllocation(){
   /*
    * While allocating, check the level of the battery and create a Recharge Task when needed depending on the predicted
    * consume of battery. A "new" will be needed to allocate temporally this task. As this task only matter inside the
-   * task allocation function, remember to do "delete" before "return" after sendind the tasks queues.
+   * task allocation function, remember to do "delete" before "return" after sending the tasks queues.
    */
   if(!agent_map_.empty())
   {
-    //Loop throught map, set auxiliary queue and empty agents' queue
+    //Loop through the map, set the auxiliary queue and empty agents' queue
     for(auto &agent: agent_map_)
     {
       agent.second.setOldTaskQueue();
@@ -1537,7 +1600,7 @@ void Planner::performTaskAllocation(){
     for(auto &agent: agent_map_)
       ROS_INFO_STREAM("[performTaskAllocation] " << agent.second);
     
-    //Loop throught map and send new queues to agents
+    //Loop through the map and send the new queues to agents
     for(auto &agent: agent_map_)
       agent.second.sendQueueToAgent();
 

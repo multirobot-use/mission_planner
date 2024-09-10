@@ -26,6 +26,7 @@
 #include "mission_planner/Waypoint.h"
 #include "mission_planner/Task.h"
 #include "mission_planner/DoCloserInspectionAction.h"
+#include "mission_planner/HeuristicPlanningAction.h"
 
 #include "geometry_msgs/PoseStamped.h"
 #include "sensor_msgs/BatteryState.h"
@@ -58,7 +59,7 @@ class Agent{
 
     //Actions
 	actionlib::SimpleActionClient<mission_planner::NewTaskListAction> ntl_ac_;
-    actionlib::SimpleActionServer<mission_planner::BatteryEnoughAction> battery_as_;
+	actionlib::SimpleActionServer<mission_planner::BatteryEnoughAction> battery_as_;
     actionlib::SimpleActionServer<mission_planner::TaskResultAction> task_result_as_;
 	bool battery_enough_;
 	mission_planner::BatteryEnoughFeedback battery_feedback_;
@@ -122,7 +123,8 @@ class Planner {
     //Node Handlers
     ros::NodeHandle nh_;
 
-    actionlib::SimpleActionServer<mission_planner::NewTaskAction> nt_as_;
+	actionlib::SimpleActionClient<mission_planner::HeuristicPlanningAction> hp_ac_;
+	actionlib::SimpleActionServer<mission_planner::NewTaskAction> nt_as_;
 
     mission_planner::NewTaskFeedback nt_feedback_;
     mission_planner::NewTaskResult nt_result_;
@@ -169,7 +171,7 @@ class Planner {
     void beaconCallback(const mission_planner::AgentBeacon::ConstPtr& beacon);
 	void missionOverCallback(const mission_planner::MissionOver& value);
 
-    //Method to reasign all not finished tasks
+    //Method to reassign all not finished tasks
     void performTaskAllocation();
 
 	//Pending Tasks methods

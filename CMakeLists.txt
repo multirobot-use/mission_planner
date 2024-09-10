@@ -46,6 +46,7 @@ add_message_files(
   Tool.msg
   BatteryControl.msg
   MissionOver.msg
+  TaskQueue.msg
 )
 
 #add_service_files(

@@ -1,3 +1,5 @@
+mission_id: ros_simulation
+
 positions:
   towers:
     tower_1:

@@ -140,8 +140,9 @@ class Planner {
     ros::Rate beacon_rate_;
 
     std::string config_file;
+	std::string mission_id_;
 
-    std::map <std::string, std::map <std::string, classes::Position>> known_positions_;
+	std::map <std::string, std::map <std::string, classes::Position>> known_positions_;
     std::map <std::string, classes::HumanTarget> human_targets_;
     std::map <std::string, classes::Tool> tools_;
 

@@ -1027,6 +1027,12 @@ Planner::~Planner(void){}
 
 void Planner::readConfigFile(std::string config_file){
   YAML::Node yaml_config = YAML::LoadFile(config_file);
+
+  if(yaml_config["mission_id"])
+    mission_id_ = yaml_config["mission_id"].as<std::string>();
+
+  // ROS_INFO_STREAM("[readConfigFile] mission id: " << mission_id_);
+
   if(yaml_config["positions"])
   {
     for(auto const& group : yaml_config["positions"])

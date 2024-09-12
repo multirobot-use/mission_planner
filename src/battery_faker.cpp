@@ -16,6 +16,7 @@ class BatteryFaker{
   private:
     std::string id_;
 
+    std::string battery_mode_;
     int mode_;
     float battery_increase_;
     float battery_decrease_;
@@ -46,7 +47,16 @@ class BatteryFaker{
   public:
     BatteryFaker() : loop_rate_(0.2), battery_increase_(0.001), battery_decrease_(0.001){
       // Load battery mode. Default: static
-      ros::param::param<int>("~battery_mode", mode_, 0);
+      ros::param::param<std::string>("~battery_mode", battery_mode_, "static");
+
+      if (battery_mode_ == "recharge_anywhere")
+        mode_ = 1;
+      else if (battery_mode_ == "recharge_in_base")
+        mode_ = 2;
+      else if (battery_mode_ == "only_discharge")
+        mode_ = 3;
+      else // static
+        mode_ = 0;
 
       ros::param::param<std::string>("~id", id_, "i");
       ros::param::param<std::string>("~pose_topic", pose_topic_, "/" + id_ + "/ual/pose");

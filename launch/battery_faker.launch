@@ -1,9 +1,11 @@
 <launch>
 
+  <!-- Battery mode: static, only_discharge, recharge_in_base, recharge_anywhere -->
   <arg name="id" default="0"/>
   <arg name="ns_prefix" default="uav"/>
   <arg name="config_file" default="$(find mission_planner)/config/conf.yaml"/>
   <arg name="debugger" default="none"/>
+  <arg name="battery_mode" default="recharge_in_base"/>
 
   <group ns="$(arg ns_prefix)$(arg id)/battery_faker">
     <param name="pose_topic" value="/$(arg ns_prefix)$(arg id)/ual/pose"/>
@@ -14,6 +16,7 @@
     output="screen" if="$(eval debugger=='none')">
     <param name="id" value="$(arg ns_prefix)$(arg id)"/>
     <param name="config_file" value="$(arg config_file)"/>
+    <param name="battery_mode" value="$(arg battery_mode)"/>
   </node>
 
   <node pkg="mission_planner" type="battery_faker" name="battery_faker" ns="$(arg ns_prefix)$(arg id)"
@@ -21,6 +24,7 @@
     if="$(eval debugger=='gdb')">
     <param name="id" value="$(arg ns_prefix)$(arg id)"/>
     <param name="config_file" value="$(arg config_file)"/>
+    <param name="battery_mode" value="$(arg battery_mode)"/>
   </node>
 
 </launch>

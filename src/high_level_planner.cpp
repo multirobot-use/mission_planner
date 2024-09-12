@@ -983,7 +983,7 @@ void Agent::print(std::ostream& os){
 //Planner definitions
 Planner::Planner(mission_planner::PlannerBeacon beacon) : 
   nt_as_(nh_, "incoming_task_action", boost::bind(&Planner::incomingTask, this, _1), false),
-  hp_ac_("/heuristic_planning", true), 
+  // hp_ac_("/heuristic_planning", true), 
   beacon_rate_(1), beacon_(beacon), mission_over_(false)
 {
   nt_as_.start();
@@ -999,6 +999,19 @@ Planner::Planner(mission_planner::PlannerBeacon beacon) :
   mission_over_sub_ = nh_.subscribe("/mission_over", 1, &Planner::missionOverCallback, this);
   ROS_INFO("[Planner] Initialization complete");
 
+  // Waiting Matlab to initialize heuristic planning action server
+  ROS_INFO("Waiting Matlab's heuristic planning action server to be available...");
+  ros::Duration waiting_server_rate(1);
+  while (!ros::isShuttingDown() && !isTopicAvailable("/heuristic_planning/status"))
+  {
+    waiting_server_rate.sleep();
+  }
+  // Create heuristic planning action client
+  ROS_INFO("[Planner] Creating the heuristic planning action client...");
+  hp_ac_ = std::make_unique<actionlib::SimpleActionClient<mission_planner::HeuristicPlanningAction>>("/heuristic_planning", true);
+
+  // Main while loop
+  ROS_INFO("[Planner] Entering main while loop...");
   beacon_rate_.reset();
   while(ros::ok() && !mission_over_)
   {
@@ -1327,9 +1340,10 @@ void Planner::beaconCallback(const mission_planner::AgentBeacon::ConstPtr& beaco
 
 void Planner::missionOverCallback(const mission_planner::MissionOver& value){mission_over_ = value.value;}
 
-//Method to reasign all not finished tasks
+//Method to reassign all not finished tasks
 void Planner::performTaskAllocation(){
-  hp_ac_.waitForServer(ros::Duration(1.0));
+  ROS_INFO("[performTaskAllocation] Waiting for heuristic planning server...");
+  hp_ac_->waitForServer(ros::Duration(1.0));
   
   // Create an action goal message
   mission_planner::HeuristicPlanningGoal goal;
@@ -1341,14 +1355,15 @@ void Planner::performTaskAllocation(){
   for (auto &task : pending_tasks_)
     goal.remaining_tasks.push_back(task.first);
 
+  ROS_INFO("[performTaskAllocation] Requesting a task allocation...");
   // Send goal to the action server
-  hp_ac_.sendGoal(goal);
+  hp_ac_->sendGoal(goal);
 
   // Wait for the results
-  if (hp_ac_.waitForResult(ros::Duration(10.0)))
+  if (hp_ac_->waitForResult(ros::Duration(10.0)))
   {
     // Read the results
-    mission_planner::HeuristicPlanningResultConstPtr result = hp_ac_.getResult();
+    mission_planner::HeuristicPlanningResultConstPtr result = hp_ac_->getResult();
 
     // If the mission planning succeeded
     if (result->success)
@@ -1804,6 +1819,19 @@ void Planner::checkBeaconsTimeout(ros::Time now){
 
 //Getters
 bool Planner::getMissionOver(){return mission_over_;}
+
+// Others
+bool Planner::isTopicAvailable(const std::string &topic_name)
+{
+  ros::master::V_TopicInfo topics;
+  ros::master::getTopics(topics);
+
+  for (const auto &topic : topics)
+    if (topic.name == topic_name)
+      return true;
+  ROS_INFO_STREAM("[isTopicAvailable] " << topic_name << " not available yet");
+  return false;
+}
 
 int main(int argc, char **argv){
   ros::init(argc, argv, "high_level_planner");

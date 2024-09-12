@@ -123,7 +123,8 @@ class Planner {
     //Node Handlers
     ros::NodeHandle nh_;
 
-	actionlib::SimpleActionClient<mission_planner::HeuristicPlanningAction> hp_ac_;
+	std::unique_ptr<actionlib::SimpleActionClient<mission_planner::HeuristicPlanningAction>> hp_ac_;
+	// actionlib::SimpleActionClient<mission_planner::HeuristicPlanningAction> hp_ac_;
 	actionlib::SimpleActionServer<mission_planner::NewTaskAction> nt_as_;
 
     mission_planner::NewTaskFeedback nt_feedback_;
@@ -183,6 +184,9 @@ class Planner {
 	
 	//Getters
 	bool getMissionOver();
+
+	// Others
+	bool isTopicAvailable(const std::string &topic_name);
 };
 
 struct Cost{

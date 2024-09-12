@@ -1829,7 +1829,6 @@ bool Planner::isTopicAvailable(const std::string &topic_name)
   for (const auto &topic : topics)
     if (topic.name == topic_name)
       return true;
-  ROS_INFO_STREAM("[isTopicAvailable] " << topic_name << " not available yet");
   return false;
 }
 

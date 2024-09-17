@@ -17,10 +17,11 @@ windows:
         - roscore
         - waitForRos; roslaunch mission_planner world.launch world:=pv_farm
   - planner/matlab: 
-      layout: even-vertical
+      layout: even-horizontal
       panes:
         - waitForRos; roslaunch mission_planner planner.launch
-        - waitForRos; roscd mission_planner; cd scripts; matlab -nodisplay -nosplash -r "matlab_ros_connector; exit"
+        - roscd mission_planner
+        #- waitForRos; roscd mission_planner; cd scripts; matlab -nodisplay -nosplash -r "matlab_ros_connector; exit"
   - uav1:
       layout: main-vertical
       panes:
@@ -32,13 +33,13 @@ windows:
       layout: main-vertical
       panes:
         - waitForRos; roslaunch mission_planner agent.launch id:=2 type:=InspectionACW
-        - waitForRos; roslaunch mission_planner ual.launch ual_backend:=light material:=Green id:=2 x:=0 y:=2 z:=0
+        - waitForRos; roslaunch mission_planner ual.launch ual_backend:=light material:=Green id:=2 x:=0 y:=5 z:=0
         - waitForRos; roslaunch mission_planner battery_faker.launch id:=2
         - waitForSimulation; rosrun groot Groot &; roscd mission_planner
   - uav3:
       layout: main-vertical
       panes:
         - waitForRos; roslaunch mission_planner agent.launch id:=3 type:=InspectionACW
-        - waitForRos; roslaunch mission_planner ual.launch ual_backend:=light material:=Blue id:=3 x:=0 y:=-2 z:=0
+        - waitForRos; roslaunch mission_planner ual.launch ual_backend:=light material:=Blue id:=3 x:=0 y:=-5 z:=0
         - waitForRos; roslaunch mission_planner battery_faker.launch id:=3
         - waitForSimulation; rosrun groot Groot &; roscd mission_planner

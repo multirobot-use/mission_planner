@@ -1399,7 +1399,7 @@ void Planner::performTaskAllocation(){
         agent.second.deleteOldTaskQueue();
     }
     else
-      ROS_WARN("[performTaskAllocation] No Agents connected yet. %lu pending tasks", pending_tasks_.size());
+      ROS_WARN("[performTaskAllocation] Task planning failed. %lu agents connected. %lu pending tasks", agent_map_.size(), pending_tasks_.size());
   }
   else
     ROS_WARN("[performTaskAllocation] Timeout reached");

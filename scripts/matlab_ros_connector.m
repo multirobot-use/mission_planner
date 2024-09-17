@@ -3,9 +3,7 @@
 ip_address = 'http://localhost:11311';
 
 % Check if ROS master's connection is alive
-try
-    rosnode list;
-catch
+if not(ros.internal.Global.isNodeActive)
     % Initialize ROS master's connection
     rosinit(ip_address);
 end
@@ -17,6 +15,8 @@ scenario_id = fscanf(config_file, 'mission_id: %s');
 
 % Load scenario's data
 [Agent, Task] = scenario(scenario_id);
+userData.Agent = Agent;
+userData.Task = Task;
 
 %% Node
 % Create a ROS node
@@ -31,16 +31,11 @@ mission_over_sub = ros.Subscriber(node, '/mission_over', 'mission_planner/Missio
 %% Action servers
 % Create action server to answer planning/replanning requests
 planning_server = ros.SimpleActionServer(node, '/heuristic_planning', 'mission_planner/HeuristicPlanning', ...
-    ExecuteGoalFcn=@heuristicPlanningCallback, DataFormat="struct");
-    % ExecuteGoalFcn={@heuristicPlanningCallback, Agent, Task}, DataFormat="struct");
+    ExecuteGoalFcn={@heuristicPlanningCallback, userData}, DataFormat="struct");    
 
 disp('Heuristic planning action server is ready');
 
 % TODO: Create action server to answer repair requests
-
-% Wait until the action client is connected
-% disp('Waiting for high level planner connection...');
-% waitForServer(planning_server);
 
 % Initialize loop variables
 ros_ok = true;
@@ -49,11 +44,11 @@ mission_over = false;
 % Run while ros::ok() or mission not over
 while ros_ok && not(mission_over)
     % Check if ros is still okay
-    % try
-    %     rosnode list;
-    % catch
-    %     ros_ok = false;
-    % end
+    try
+        [~] = evalc('rosnode list');
+    catch
+        ros_ok = false;
+    end
 
     % Check if mission is over
     % Receive a message from mission over subscriber, waiting up to 0.1s
@@ -61,35 +56,73 @@ while ros_ok && not(mission_over)
     if not(isempty(mission_over_sub.LatestMessage)) && mission_over_sub.LatestMessage.Value == true
         mission_over = true;
     end
+
+    pause(0.5);
 end
 
 %% End connection with ROS
 rosshutdown;
 
-%function [result, success] = heuristicPlanningCallback(src, goal_msg, feedback_msg, result_msg, Agent, Task)
-function [result, success] = heuristicPlanningCallback(src, goal_msg, feedback_msg, result_msg)%, Agent, Task)
+function [result, success] = heuristicPlanningCallback(src, goal_msg, feedback_msg, result_msg, userData)
     % Inputs:
     % src is the associated action server object
     % goal_msg is the goal message sent by the action client
     % feedback_msg is the response message (feedback)
     % result_msg is the result message
     % Outputs:
-    % result is a action result message
+    % result is an action result message
     % success is a bool variable, true if the goal was reached, false if the goal was aborted or preempted
 
     disp('Received a new planning request')
 
-    % Set up the feedback and the result
-    feedback_msg = rosmessage('mission_planner/HeuristicPlanningFeedback');
-    result_msg = rosmessage('mission_planning/HeuristicPlanningResult');
+    % Extract from userData the available robots
+    robot_counter = 1;
+    for robot = 1:size(userData.Agent, 2)
+        if ismember(userData.Agent(robot).name, goal_msg.AvailableAgents)
+            available_agents(robot_counter) = userData.Agent(robot);
+            robot_counter = robot_counter + 1;
+        end
+    end
+
+    % Add the recharge task to the pending tasks structure
+    pending_tasks(1) = userData.Task(1);
+    % Extract from userData the pending tasks
+    task_counter = 2;
+    for task = 2:1:size(userData.Task, 2)
+        if ismember(userData.Task(task).name, goal_msg.RemainingTasks)
+            pending_tasks(task_counter) = userData.Task(task);
+            task_counter = task_counter + 1;
+        end
+    end
 
     % Send feedback to the client
-    sendFeedback(planning_server, feedback_msg, default_goal_handle);
+    feedback_msg.Status = 'Executing heuristic planner...';
+    sendFeedback(src, feedback_msg);
+
+    % Call the heuristic task allocator
+    try
+        [Agent, Task, ~] = heuristicTaskAllocator(available_agents, pending_tasks, 4, 9);
+        result_msg.Success = true;
+    catch
+        result_msg.Success = false;
+    end
+
+    % Extract the results from Agent structure and put them in result_msg
+    if result_msg.Success == true
+        for robot = 1:size(Agent, 2)
+            result_msg.PlanningResult(robot).MessageType = 'mission_planner/TaskQueue';
+            result_msg.PlanningResult(robot).AgentId = Agent(robot).name;
+            for task = 2:size(Agent(robot).queue, 2)
+                result_msg.PlanningResult(robot).TaskQueue_(1) = {Task(Agent(robot).queue(task)).name};
+            end
+        end
+    end
+
+    % Send feedback to the client
+    feedback_msg.Status = 'Sending back the panning result...';
+    sendFeedback(src, feedback_msg);
 
     % Return the final result to the client
-    result_msg = true;
-    setResult(planning_server, result_msg, default_goal_handle);
-
     result = result_msg;
-    success = true;
+    success = result_msg.Success;
 end

@@ -125,4 +125,10 @@ function [result, success] = heuristicPlanningCallback(src, goal_msg, feedback_m
     % Return the final result to the client
     result = result_msg;
     success = result_msg.Success;
+
+    if success
+        disp('Task planning succeeded');
+    else
+        disp('Task planning failed');
+    end
 end

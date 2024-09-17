@@ -999,6 +999,9 @@ Planner::Planner(mission_planner::PlannerBeacon beacon) :
   mission_over_sub_ = nh_.subscribe("/mission_over", 1, &Planner::missionOverCallback, this);
   ROS_INFO("[Planner] Initialization complete");
 
+  // Initialize the recharge task
+  recharge_task_ = new classes::Recharge("Recharge", 0.0, 1.0);
+
   // Waiting Matlab to initialize heuristic planning action server
   ROS_INFO("Waiting Matlab's heuristic planning action server to be available...");
   ros::Duration waiting_server_rate(1);
@@ -1381,7 +1384,12 @@ void Planner::performTaskAllocation(){
         auto agent = queue.agent_id;
         for (auto &task : queue.task_queue)
         {
-          agent_map_[agent].addTaskToQueue(pending_tasks_[task]);
+          // Add a recharge task to the queue
+          if (task == "t_R")
+            agent_map_[agent].addTaskToQueue(recharge_task_);
+          else
+          // Add a pending task to the queue
+            agent_map_[agent].addTaskToQueue(pending_tasks_[task]);
         }
       }
 

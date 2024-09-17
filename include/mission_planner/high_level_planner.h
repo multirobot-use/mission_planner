@@ -153,6 +153,7 @@ class Planner {
 	std::vector <std::string> monitor_agents_;
 
     std::map <std::string, classes::Task*> pending_tasks_;
+	classes::Task* recharge_task_;
 	std::vector <std::string> deliver_tasks_;
 	std::vector <std::string> inspect_tasks_;
 	std::vector <std::string> monitor_tasks_;

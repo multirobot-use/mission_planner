@@ -32,8 +32,8 @@
   </node>
 
   <node pkg="px4_bringup" type="launch_gzworld.py" name="gazebo_world" output="screen" if="$(eval world=='pv_farm')"
-    args="-physics=ode -world=$(find grvc_gazebo_worlds)/worlds/evora_solar_panel_farm.world
-    -add_model_path=$(find grvc_gazebo_worlds)/models
+    args="-physics=ode -world=$(find mission_planner)/gazebo_worlds/worlds/evora_solar_panel_farm.world
+    -add_model_path=$(find mission_planner)/gazebo_worlds/models
     -description_package=robots_description">
 		<rosparam param="sim_origin">[38.541003, -7.961719, 0]</rosparam>
   </node>

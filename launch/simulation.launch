@@ -92,7 +92,7 @@
       <arg name="material" value="Green"/>
       <arg name="camera" value="false"/>
       <arg name="x" value="0"/>
-      <arg name="y" value="4"/>
+      <arg name="y" value="5"/>
       <arg name="z" value="0"/>
       <arg name="yaw" value="0"/>
 
@@ -129,8 +129,8 @@
       <arg name="robot_model" value="mbzirc"/>
       <arg name="material" value="Blue"/>
       <arg name="camera" value="false"/>
-      <arg name="x" value="4"/>
-      <arg name="y" value="0"/>
+      <arg name="x" value="0"/>
+      <arg name="y" value="-5"/>
       <arg name="z" value="0"/>
       <arg name="yaw" value="0"/>
 
@@ -167,8 +167,8 @@
       <arg name="robot_model" value="mbzirc"/>
       <arg name="material" value="Blue"/>
       <arg name="camera" value="false"/>
-      <arg name="x" value="4"/>
-      <arg name="y" value="4"/>
+      <arg name="x" value="5"/>
+      <arg name="y" value="5"/>
       <arg name="z" value="0"/>
       <arg name="yaw" value="0"/>
 
@@ -205,8 +205,8 @@
       <arg name="robot_model" value="mbzirc"/>
       <arg name="material" value="Blue"/>
       <arg name="camera" value="false"/>
-      <arg name="x" value="2"/>
-      <arg name="y" value="2"/>
+      <arg name="x" value="-5"/>
+      <arg name="y" value="-5"/>
       <arg name="z" value="0"/>
       <arg name="yaw" value="0"/>
 

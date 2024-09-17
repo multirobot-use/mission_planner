@@ -65,6 +65,12 @@ mission_over:
 groot:
 	@rosrun groot Groot &
 
+ros_simulation_tasks:
+	@rosrun mission_planner gesture_recognition_faker Inspection I $(waypoints)
+	@rosrun mission_planner gesture_recognition_faker PVArrayInspection A $(geo_wp)
+	@rosrun mission_planner gesture_recognition_faker Monitoring F $(ugv) $(height)
+
+
 #Phase 1 are the tests executted to validate the Agent Behavior Manager in simulations with a single UAV
 phase_1_tasks_1:
 	@echo "Mission Start. 3 Tasks requested, 1 of each type"

@@ -26,8 +26,13 @@ class ISTugvFaker{
     ros::Publisher atrvjr_pose_pub_;
     ros::Publisher jackal_pose_pub_;
     geographic_msgs::GeoPoseStamped atrvjr_pose_; 
-    geographic_msgs::GeoPoseStamped jackal_pose_; 
+    geographic_msgs::GeoPoseStamped jackal_pose_;
+    geographic_msgs::GeoPoseStamped north_position_;
+    geographic_msgs::GeoPoseStamped south_position_;
+    float latitude_increment_;
     ros::Rate pose_rate_;
+    std::string atrvjr_direction_;
+    std::string jackal_direction_;
 
   public:
     ISTugvFaker() : pose_rate_(0.2),
@@ -39,20 +44,41 @@ class ISTugvFaker{
         atrvjr_pose_pub_ = nh_.advertise<geographic_msgs::GeoPoseStamped>("/atrvjr/geopose", 1);
         jackal_pose_pub_ = nh_.advertise<geographic_msgs::GeoPoseStamped>("/jackal0/geopose", 1);
 
-        //Position: solar pannel row 14 column 2
+        // Initial atrvjr and jackal movement directions
+        atrvjr_direction_ = "right";
+        jackal_direction_ = "up";
+
+        // Define north and south points for jackal trajectory
+        // Latitude  - y
+        // Longitude - x
+        // Altitude  - z
+        north_position_.pose.position.latitude = 38.54121161489917;
+        north_position_.pose.position.longitude = -7.961711602856107;
+        north_position_.pose.position.altitude = 230.1384181595744;
+        south_position_.pose.position.latitude = 38.54106489217978;
+        south_position_.pose.position.longitude = -7.961711602856107;
+        south_position_.pose.position.altitude = 230.1384181595744;
+
+        // Compute the latitude increment per position update interval
+        // 15 meters, let's say 7'5 seconds to travel those 15 meters, 0'2 seconds per positions update
+        // 38 updates per direction
+        latitude_increment_ = (north_position_.pose.position.latitude - south_position_.pose.position.latitude) / 38;
+
+        // Position: solar pannel row 14 column 2
         atrvjr_pose_.pose.position.latitude = 38.54143688611777;
         atrvjr_pose_.pose.position.longitude = -7.961302628908529;
         atrvjr_pose_.pose.position.altitude = 227.61875915527344;
 
-        //Position: corner 4
-        jackal_pose_.pose.position.latitude = 38.54131475760623;
-        jackal_pose_.pose.position.longitude = -7.961691219061984;
-        jackal_pose_.pose.position.altitude = 227.61875915527344;
+        //Initial position: south
+        jackal_pose_.pose.position.latitude = south_position_.pose.position.latitude;
+        jackal_pose_.pose.position.longitude = south_position_.pose.position.longitude;
+        jackal_pose_.pose.position.altitude = south_position_.pose.position.altitude;
 
         pose_rate_.reset();
         while(ros::ok())
         {
           ros::spinOnce();
+          UGVPositionUpdater();
           atrvjr_pose_pub_.publish(atrvjr_pose_);
           jackal_pose_pub_.publish(jackal_pose_);
           pose_rate_.sleep();
@@ -60,6 +86,30 @@ class ISTugvFaker{
       }
 
     ~ISTugvFaker(void){}
+
+    void UGVPositionUpdater() {
+      // Jackal will move in a vertical line in the central path at the north of the origin
+      // Point 1: x==0, y==10: -7.961712761304593,38.54106489217978,230.1931775972878
+      // Point 2: x==0, y==25: -7.961711602856107,38.54121161489917,230.1384181595744
+      if (jackal_direction_ == "up") {
+        jackal_pose_.pose.position.latitude = jackal_pose_.pose.position.latitude + latitude_increment_;
+        if (jackal_pose_.pose.position.latitude > north_position_.pose.position.latitude) {
+          jackal_direction_ = "down";
+        }
+      }
+      else {
+        jackal_pose_.pose.position.latitude = jackal_pose_.pose.position.latitude - latitude_increment_;
+        if (jackal_pose_.pose.position.latitude < south_position_.pose.position.latitude) {
+          jackal_direction_ = "down";
+        }
+      }
+
+      // atrvjr will move in a square around the building
+      // Corner 1: x==0,  y==30:   -7.961710021346433,38.54128355993739,229.9654475267011
+      // Corner 2: x==20, y==30:   -7.961515416900085,38.54128629006915,229.5583745517417
+      // Corner 3: x==20, y==47.5: -7.961515302176315,38.54142284054371,229.1205587457127
+      // Corner 4: x==0,  y==47.5: -7.961710530654779,38.54142927235737,229.567600993049
+    }
 
     void mobileStationCB(const mission_planner::RequestMobileChargingStationGoalConstPtr &goal) {
       mobile_station_result_.success = true;

@@ -62,6 +62,7 @@ end
 
 %% End connection with ROS
 rosshutdown;
+clear all;
 
 function [result, success] = heuristicPlanningCallback(src, goal_msg, feedback_msg, result_msg, userData)
     % Inputs:
@@ -99,21 +100,45 @@ function [result, success] = heuristicPlanningCallback(src, goal_msg, feedback_m
     feedback_msg.Status = 'Executing heuristic planner...';
     sendFeedback(src, feedback_msg);
 
+    result = rosmessage('mission_planner/HeuristicPlanningResult', 'DataFormat', 'struct');
+
     % Call the heuristic task allocator
     try
         [Agent, Task, ~] = heuristicTaskAllocator(available_agents, pending_tasks, 4, 9);
-        result_msg.Success = true;
+        % result_msg.Success = true;
+        result.Success = true;
     catch
-        result_msg.Success = false;
+        % result_msg.Success = false;
+        result.Success = false;
     end
 
+    % Initialize the PlanningResult array with ROS messages of type TaskQueue
+    % result_msg.PlanningResult = repmat(rosmessage('mission_planner/TaskQueue'), 1, size(Agent, 2));
+    % result.PlanningResult = rosmessage('mission_planner/TaskQueue');
+
     % Extract the results from Agent structure and put them in result_msg
-    if result_msg.Success == true
+    %if result_msg.Success == true
+    if result.Success == true
         for robot = 1:size(Agent, 2)
-            result_msg.PlanningResult(robot).MessageType = 'mission_planner/TaskQueue';
-            result_msg.PlanningResult(robot).AgentId = Agent(robot).name;
+            % result.PlanningResult{robot} = rosmessage('mission_planner/TaskQueue');
+            %* result.PlanningResult{robot} = rosmessage('mission_planner/TaskQueue', 'DataFormat', 'struct');
+            result.PlanningResult(robot) = rosmessage('mission_planner/TaskQueue', 'DataFormat', 'struct');
+            %* result.PlanningResult{robot}.AgentId = Agent(robot).name;
+            result.PlanningResult(robot).AgentId = Agent(robot).name;
+            % result.PlanningResult{robot}.Queue = cell(size(Agent(robot).queue, 2), 1);
+
+            % result_msg.PlanningResult(robot).MessageType = 'mission_planner/TaskQueue';
+            % result_msg.PlanningResult(robot).AgentId = Agent(robot).name;
+            % result_msg.PlanningResult(robot).Queue = repmat(rosmessage('mission_planner/Task'), 1, size(Agent(robot).queue, 2));
             for task = 2:size(Agent(robot).queue, 2)
-                result_msg.PlanningResult(robot).TaskQueue_(1) = {Task(Agent(robot).queue(task)).name};
+                % result.PlanningResult{robot}.Queue{task - 1} = rosmessage('mission_planner/Task');
+                %* result.PlanningResult{robot}.Queue{task - 1} = rosmessage('mission_planner/Task', 'DataFormat', 'struct');
+                result.PlanningResult(robot).Queue(task - 1) = rosmessage('mission_planner/Task', 'DataFormat', 'struct');
+                %* result.PlanningResult{robot}.Queue{task - 1}.Id = Task(Agent(robot).queue(task)).name;
+                result.PlanningResult(robot).Queue(task - 1).Id = Task(Agent(robot).queue(task)).name;
+
+                % task_msg_aux.Id = Task(Agent(robot).queue(task)).name;
+                % result_msg.PlanningResult(robot).Queue(task).Id = Task(Agent(robot).queue(task)).name;
             end
         end
     end
@@ -123,12 +148,15 @@ function [result, success] = heuristicPlanningCallback(src, goal_msg, feedback_m
     sendFeedback(src, feedback_msg);
 
     % Return the final result to the client
-    result = result_msg;
-    success = result_msg.Success;
+    % result = result_msg;
+    % success = result_msg.Success;
+    success = result.Success;
 
     if success
         disp('Task planning succeeded');
     else
         disp('Task planning failed');
     end
+
+    % src.sendResult(result);
 end

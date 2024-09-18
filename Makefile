@@ -2,11 +2,12 @@ task_id = i
 human_target = human_target_1
 distance = 1.5
 number = 1
-waypoints = 0 10 2 0 15 2
+waypoints = 10 10 2
 tool = hammer
 ugv = jackal
-height = 10
-geo_wp = 92.6349 -0.073258 10 18.1892 -1.076 10
+height = 5
+# geo_wp = 92.6349 -0.073258 10 18.1892 -1.076 10
+geo_wp = 40 -6 5 5 -6 5
 
 agent_prefix = uav
 agent_id = 1

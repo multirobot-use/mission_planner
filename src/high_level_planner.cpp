@@ -1382,14 +1382,14 @@ void Planner::performTaskAllocation(){
       for (auto &queue : result->planning_result)
       {
         auto agent = queue.agent_id;
-        for (auto &task : queue.task_queue)
+        for (auto &task : queue.queue)
         {
           // Add a recharge task to the queue
-          if (task == "t_R")
+          if (task.id == "t_R")
             agent_map_[agent].addTaskToQueue(recharge_task_);
           else
           // Add a pending task to the queue
-            agent_map_[agent].addTaskToQueue(pending_tasks_[task]);
+            agent_map_[agent].addTaskToQueue(pending_tasks_[task.id]);
         }
       }
 

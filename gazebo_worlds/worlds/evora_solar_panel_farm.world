@@ -44,5 +44,31 @@
       </light>
     </state>
 
+  <!-- jeff_electrician monitoring {-->
+  <model name='jeff_electrician_monitoring'>
+    <pose>15 9 0 0 0 1.5708</pose>
+    <static>true</static>
+    <link name='link'>
+   	<visual name='visual'>
+         <cast_shadows>false</cast_shadows>
+         <!-- jeff_electrician {-->
+         <geometry>
+           <mesh>
+            <uri>file://jeff_electrician/jeff_electrician.dae</uri>
+            <scale>1 1 1</scale>
+           </mesh>
+         </geometry>
+        </visual>
+       <collision name='collision'>
+         <geometry>
+           <mesh>
+            <uri>file://jeff_electrician/jeff_electrician.dae</uri>
+            <scale>1 1 1</scale>
+           </mesh>
+         </geometry>
+       </collision>
+      </link>
+   </model>
+
   </world>
 </sdf>

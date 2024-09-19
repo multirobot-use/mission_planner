@@ -197,6 +197,10 @@ cd ~
 python3.9 -m venv matlab_env
 ```
 
+```matlab
+pyenv('Version', '~/matlab_env/bin/python3.9')
+```
+
 ## Test
 
 To test if the system is working correctly you can launch a simulation and order tasks or unespected events by executing Makefile recipes.

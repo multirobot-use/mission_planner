@@ -4,8 +4,8 @@ material evora_solar_panel_farm
 	{
 		pass
 		{
-			ambient 0.5 0.5 0.5 1.0
-			diffuse 0.5 0.5 0.5 1.0
+			ambient 0.9 0.9 0.9 1.0
+			diffuse 0.9 0.9 0.9 1.0
 			specular 0.2 0.2 0.2 1.0 12.5
 
 			texture_unit

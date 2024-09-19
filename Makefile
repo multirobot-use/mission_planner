@@ -5,7 +5,7 @@ number = 1
 waypoints = 10 10 2
 tool = hammer
 ugv = jackal
-height = 5
+height = 2
 # geo_wp = 92.6349 -0.073258 10 18.1892 -1.076 10
 geo_wp = 40 -6 5 5 -6 5
 

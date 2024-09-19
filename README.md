@@ -188,6 +188,15 @@ cd scripts
 sudo matlab -nodisplay -nosplash -r "gen_matlab_msgs; exit"
 ```
 
+We will also need to include [task_planner](https://github.com/multirobot-use/task_planner) installation folder and subfolders in the MATLAB's path.
+
+If you experience problems related with the python executable while executing the above script, you may find useful to create a virtual python environment, e.g., in my case, ROS need python3.8 to be the default python executable, but MATLAB 2023b needs python3.9. Creating a virtual python environment and specifying it's executable route in the Robotics Toolbox Settings solved the problem for me:
+
+```bash
+cd ~
+python3.9 -m venv matlab_env
+```
+
 ## Test
 
 To test if the system is working correctly you can launch a simulation and order tasks or unespected events by executing Makefile recipes.

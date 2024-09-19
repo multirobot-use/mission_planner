@@ -2510,7 +2510,7 @@ bool AgentNode::checkBeaconTimeout(ros::Time now){
 }
 void AgentNode::atrvjrPositionCallback(const geographic_msgs::GeoPoseStamped& geo_pose){ 
   geometry_msgs::Point32 pose = geographic_to_cartesian(geo_pose.pose.position, origin_geo_);
-  atrvjr_pose_ = classes::Position(pose.x, pose.y, 3); //As UGV are at ground level, z id fiex at 3m for goto purposes
+  atrvjr_pose_ = classes::Position(pose.x, pose.y, 3); //As UGV are at ground level, z id fixed at 3m for goto purposes
   //ROS_INFO_STREAM("[atrvjrPositionCallback] GeoPose: (" << geo_pose.pose.position.latitude << ", " <<
       //geo_pose.pose.position.longitude << ")\tXYPose: (" << atrvjr_pose_.getX() << ", " << atrvjr_pose_.getY() << ")");
   return;

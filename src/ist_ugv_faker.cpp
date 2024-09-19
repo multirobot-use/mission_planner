@@ -41,7 +41,7 @@ class ISTugvFaker{
     std::string jackal_direction_;
 
   public:
-    ISTugvFaker() : pose_rate_(2), // f = 2 -> T = 0.5 seconds
+    ISTugvFaker() : pose_rate_(3), // f = 3 -> T = 0.333... seconds
       mobile_station_as_(nh_, "/jackal0/cooperation_use/request_mobile_charging_station", boost::bind(&ISTugvFaker::mobileStationCB, this, _1), false),
       closer_inspection_as_(nh_, "/atrvjr/cooperation_use/do_closer_inspection", boost::bind(&ISTugvFaker::closerInspectionCB, this, _1), false) {
         mobile_station_as_.start();

@@ -3,7 +3,10 @@ cd ../action
 
 % Make a new folder and move dependent actions inside it
 mkdir('compile_later');
-movefile('TaskResult.action', 'compile_later/TaskResult.action');
+try
+    movefile('TaskResult.action', 'compile_later/TaskResult.action');
+catch
+end
 
 % Go to the folder above the package's folder (it doesn't need to be workspace's src folder)
 cd ../..

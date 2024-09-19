@@ -2,12 +2,12 @@ task_id = i
 human_target = human_target_1
 distance = 1.5
 number = 1
-waypoints = 10 10 2
+waypoints = 15 -6 1
 tool = hammer
 ugv = jackal
 height = 2
 # geo_wp = 92.6349 -0.073258 10 18.1892 -1.076 10
-geo_wp = 40 -6 5 5 -6 5
+geo_wp = 40 -16 2 5 -16 2
 
 agent_prefix = uav
 agent_id = 1
@@ -68,8 +68,8 @@ groot:
 
 ros_simulation_tasks:
 	@rosrun mission_planner gesture_recognition_faker Inspection I $(waypoints)
-	@rosrun mission_planner gesture_recognition_faker PVArrayInspection A $(geo_wp)
 	@rosrun mission_planner gesture_recognition_faker Monitoring F $(ugv) $(height)
+	@rosrun mission_planner gesture_recognition_faker PVArrayInspection A $(geo_wp)
 
 
 #Phase 1 are the tests executted to validate the Agent Behavior Manager in simulations with a single UAV

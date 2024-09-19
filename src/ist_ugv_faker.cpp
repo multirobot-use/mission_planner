@@ -41,7 +41,7 @@ class ISTugvFaker{
     std::string jackal_direction_;
 
   public:
-    ISTugvFaker() : pose_rate_(0.2), // 5 seconds
+    ISTugvFaker() : pose_rate_(2), // f = 2 -> T = 0.5 seconds
       mobile_station_as_(nh_, "/jackal0/cooperation_use/request_mobile_charging_station", boost::bind(&ISTugvFaker::mobileStationCB, this, _1), false),
       closer_inspection_as_(nh_, "/atrvjr/cooperation_use/do_closer_inspection", boost::bind(&ISTugvFaker::closerInspectionCB, this, _1), false) {
         mobile_station_as_.start();
@@ -72,7 +72,7 @@ class ISTugvFaker{
 
         // Compute the circular trajectory parameters
         angular_velocity_ = 2 * 3.141592654 / 30; // w = 2 * pi / T
-        angle_increment_ = angular_velocity_ * 5; // AO = w * At
+        angle_increment_ = angular_velocity_ * 1; // AO = w * At
         current_angle_ = 0;
 
         // Compute the latitude increment per position update interval
@@ -132,8 +132,8 @@ class ISTugvFaker{
       current_angle_ += angle_increment_;
       if (current_angle_ > 2 * 3.141592654)
         current_angle_ = 0;
-      atrvjr_pose_.pose.position.latitude = center_.pose.position.latitude   + 0.0001 * sin(current_angle_);
-      atrvjr_pose_.pose.position.longitude = center_.pose.position.longitude + 0.0001 * cos(current_angle_);
+      atrvjr_pose_.pose.position.latitude = center_.pose.position.latitude   + 0.00005 * sin(current_angle_);
+      atrvjr_pose_.pose.position.longitude = center_.pose.position.longitude + 0.00005 * cos(current_angle_);
     }
 
     void mobileStationCB(const mission_planner::RequestMobileChargingStationGoalConstPtr &goal) {

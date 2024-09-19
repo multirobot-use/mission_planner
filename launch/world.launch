@@ -35,7 +35,7 @@
     args="-physics=ode -world=$(find mission_planner)/gazebo_worlds/worlds/evora_solar_panel_farm.world
     -add_model_path=$(find mission_planner)/gazebo_worlds/models
     -description_package=robots_description">
-		<rosparam param="sim_origin">[38.541003, -7.961719, 0]</rosparam>
+		<rosparam param="sim_origin">[38.54099745245704, -7.961717658210254, 0]</rosparam>
   </node>
 
 </launch>

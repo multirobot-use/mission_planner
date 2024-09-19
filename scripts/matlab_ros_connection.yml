@@ -41,7 +41,7 @@ windows:
       layout: main-vertical
       panes:
         - waitForRos; roslaunch mission_planner agent.launch id:=3 type:=InspectionACW
-        - waitForRos; roslaunch mission_planner ual.launch ual_backend:=light material:=Blue id:=3 x:=0 y:=-5 z:=0
+        - waitForRos; roslaunch mission_planner ual.launch ual_backend:=light material:=Yellow id:=3 x:=0 y:=-5 z:=0
         - waitForRos; roslaunch mission_planner battery_faker.launch id:=3
         - waitForRos; rosrun mission_planner ist_ugv_faker
         #- waitForSimulation; rosrun groot Groot &; roscd mission_planner

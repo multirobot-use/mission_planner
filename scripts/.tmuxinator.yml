@@ -21,8 +21,8 @@ windows:
       panes:
         - waitForRos; roslaunch mission_planner planner.launch
         #- waitForRos; roscd mission_planner; rostopic echo /heuristic_planning/result
-        - waitForRos; roscd mission_planner; cd scripts; matlab -nodisplay -nosplash -r "matlab_ros_connector; exit"
         - roscd mission_planner
+        #- waitForRos; roscd mission_planner; cd scripts; matlab -nodisplay -nosplash -r "matlab_ros_connector; exit"
   - uav1:
       layout: main-vertical
       panes:

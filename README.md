@@ -2,19 +2,20 @@
 
 ## Overview
 
-This repository is about a cognitive task planner in charge of planning missions and governing the behaviour of multi-UAV teams carrying out inspection and maintenance tasks jointly with human operators.
+This repository contains a ROS framework that functions as a cognitive task planner and mission supervisor in charge of planning missions and governing the behavior of multi-UAV teams.
 
 The system is designed to ensure the safety of both airborne equipment and human workers at all times.
 
-This system implements a software layer for a multi-layer software architecture that is further divided into two, a High-Level Planner centralised on the ground and an Agent Behavior Manager distributed on board each UAV. In this way, the High-Level Planner receives task requests as inputs, and its work is to coordinate all the UAVs, asigning to each of them a mission plan to follow. The Agent Behavior Manager is the one in charge of executing and supervising those plans, calling the appropriate lower-level controllers at any given time.
+This system implements a software layer part of a multi-layer software architecture that is further divided into two, a High-Level Planner, centralized on the ground station, and an Agent Behavior Manager, distributed on board each UAV. In this way, the High-Level Planner receives task requests as inputs, and its work is to coordinate all the UAVs, assigning to each of them a mission plan to follow. The Agent Behavior Manager is the one in charge of executing and supervising those plans, calling the appropriate lower-level controllers at any given time.
 
-The controllers for each specific action inside each of the tasks are not included in this software layer, but simple
-version of those controllers can be found in this repository in order to be able to test the software layer propoerly in
-simulation. Real controllers will be inplemented in the next layer of the multi-layer software architecture.
+The controllers for each specific action inside each of the tasks are not included in this work, but simple
+versions of those controllers can be found in this repository in order to be able to test the software layer properly in simulation.
 
-This software is currently being developed on Ubuntu 18.04 with ROS Melodic.
+The multi-robot task allocation during the mission planning process is performed by an heuristic algorithm implemented in Matlab that can be found in a [separate repository](https://github.com/multirobot-use/task_planner). This Matlab code is connected with ROS through the [matlab_ros_connector](scripts/matlab_ros_connector.m) script available in the scripts folder. It implements a ROS Action Server that receives planning and replanning requests from the High-Level Planner.
 
-A more detailed description of the system can be found [here](https://www.researchgate.net/publication/360514763_Mission_Planning_and_Execution_in_Heterogeneous_Teams_of_Aerial_Robots_supporting_Power_Line_Inspection_Operations).
+This software is currently being developed on Ubuntu 20.04 with ROS Noetic.
+
+A more detailed description of the ROS framework can be found in [[1]](#1).
 
 If you are using this software layer or you found this approach inspiring for your own research, please cite:
 
@@ -33,14 +34,14 @@ If you are using this software layer or you found this approach inspiring for yo
 
 To install the repositories correctly, you have to follow the next steps:
 
-0.1. ROS Melodic installation
+0.1. ROS Noetic installation
 
 ```bash
 sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
 curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
 sudo apt update
-sudo apt install -y ros-melodic-desktop-full
-echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc
+sudo apt install -y ros-noetic-desktop-full
+echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
 source ~/.bashrc
 sudo apt install -y python-rosdep python-rosinstall python-rosinstall-generator python-wstool build-essential
 sudo rosdep init
@@ -61,9 +62,11 @@ sudo apt-get install -y python-catkin-tools
 1. Install necessary packages
 
 ```bash
-sudo apt install -y libeigen3-dev ros-melodic-geodesy ros-melodic-joy ros-melodic-multimaster-fkie
-pip install pynput
+sudo apt install -y libeigen3-dev ros-noetic-geodesy ros-noetic-joy ros-noetic-multimaster-fkie
+sudo pip install pynput
 sudo apt install -y xz-utils
+sudo apt-get install -y libzmq3-dev libboost-dev
+sudo apt-get install -y ros-noetic-behaviortree-cpp-v3
 ```
 
 2. Create a ROS workspace
@@ -80,40 +83,19 @@ echo "source $HOME/mission_planner_ws/devel/setup.bash" >> ~/.bashrc
 
 ```bash
 cd ~/mission_planner_ws/src/
-
-git clone https://github.com/ctu-mrs/aerialcore_simulation.git
-git clone https://github.com/grvcTeam/aerialcore_planning.git
-git clone https://github.com/Angel-M-Montes/path_planner.git
+git clone https://github.com/multirobot-use/mission_planner.git
+git clone https://github.com/multirobot-use/task_planner.git
 git clone https://github.com/grvcTeam/grvc-ual.git
 git clone https://github.com/grvcTeam/grvc-utils.git
-```
-
-4. Clone the necessary packages, which are: grvc-ual, grvc-utils, BehaviorTree.CPP, Groot
-
-```bash
-git clone https://github.com/ctu-mrs/aerialcore_simulation.git
-git clone https://github.com/Angel-M-Montes/path_planner.git
-git clone https://github.com/grvcTeam/grvc-ual
-git clone https://github.com/grvcTeam/grvc-utils
-git clone https://github.com/BehaviorTree/BehaviorTree.CPP.git
-git clone https://github.com/BehaviorTree/Groot.git
 ```
 
 5. Ignore some packages
 
 ```bash
-touch ~/mission_planner_ws/src/aerialcore_planning/large_scale_inspection_planner/CATKIN_IGNORE
 touch ~/mission_planner_ws/src/grvc-utils/mission_lib/CATKIN_IGNORE
 ```
 
-6. Install BehaviorTree.CPP package and its dependencies
-
-```bash
-sudo apt-get install -y libzmq3-dev libboost-dev
-sudo apt-get install -y ros-melodic-behaviortree-cpp-v3
-```
-
-7. Install Groot and its dependencies
+6. Install Groot and its dependencies
 
 ```bash
 cd ~/mission_planner_ws/src/
@@ -125,37 +107,37 @@ rosdep install --from-paths src --ignore-src
 catkin build
 ```
 
-8. Install and configure UAL. Only MAVROS needed. Make sure to install its dependencies when asked
+7. Install and configure UAL. Only MAVROS needed. Make sure to install its dependencies when asked
 
 ```bash
 cd ~/mission_planner_ws/src/grvc-ual
 ./configure.py
 ```
 
-9. Install MAVROS packages
+8. Install MAVROS packages
 
 ```bash
-sudo apt install -y ros-melodic-mavros ros-melodic-mavros-extras
+sudo apt install -y ros-noetic-mavros ros-noetic-mavros-extras
 sudo geographiclib-get-geoids egm96-5
 sudo usermod -a -G dialout $USER
 sudo apt remove modemmanager
 ```
 
-10.1 (Optional) Install RealSense plugins for real-life execution
+9.1 (Optional) Install RealSense plugins for real-life execution
 
 ```bash
-sudo apt install -y ros-melodic-realsense2-camera ros-melodic-realsense2-description
+sudo apt install -y ros-noetic-realsense2-camera ros-noetic-realsense2-description
 ```
 
-10.2 (Optional) Download 99-realsense-libusb.rules file from [github](https://github.com/IntelRealSense/librealsense/blob/master/config/99-realsense-libusb.rules)
+9.2 (Optional) Download 99-realsense-libusb.rules file from [github](https://github.com/IntelRealSense/librealsense/blob/master/config/99-realsense-libusb.rules)
 
-10.3 (Optional) Give permissions to read the data from the RealSense camera
+9.3 (Optional) Give permissions to read the data from the RealSense camera
 
 ```bash
 sudo cp 99-realsense-libusb.rules /etc/udev/rules.d/99-realsense-libusb.rules
 ```
 
-11. Install PX4 for SITL simulations
+10. Install PX4 for SITL simulations
 
 ```bash
 sudo apt install -y libgstreamer1.0-dev python-jinja2 python-pip
@@ -169,7 +151,7 @@ make
 make px4_sitl_default gazebo
 ```
 
-12. Build
+11. Build
 
 ```bash
 cd ~/mission_planner_ws/
@@ -178,9 +160,9 @@ catkin build
 
 **Note**: In case that the installation did not go well, try compile each package individually.
 
-13. Matlab setup
+12. Matlab setup
 
-To set up Matlab-ROS connection we need to open Matlab as admin (in order to be able to save Matlab's path) and then run the [gen_matlab_msgs](scripts/gen_matlab_msgs.m) script.
+To use ROS in Matlab we need the [ROS Toolbox](https://www.mathworks.com/products/ros.html). Once the toolbox is installed, to set up the Matlab-ROS connection, we need to open Matlab as admin (in order to be able to save Matlab's path) and then run the [gen_matlab_msgs](scripts/gen_matlab_msgs.m) script.
 
 ```bash
 roscd mission_planner
@@ -190,7 +172,7 @@ sudo matlab -nodisplay -nosplash -r "gen_matlab_msgs; exit"
 
 We will also need to include [task_planner](https://github.com/multirobot-use/task_planner) installation folder and subfolders in the MATLAB's path.
 
-If you experience problems related with the python executable while executing the above script, you may find useful to create a virtual python environment, e.g., in my case, ROS need python3.8 to be the default python executable, but MATLAB 2023b needs python3.9. Creating a virtual python environment and specifying it's executable route in the Robotics Toolbox Settings solved the problem for me:
+If you experience problems related with the python executable while executing the above script, you may find useful to create a virtual python environment, e.g., in my case, ROS need python3.8 to be the default python executable, but MATLAB 2023b needs python3.9. Creating a virtual python environment and specifying it's executable route in the ROS Toolbox Preferences solved the problem for me:
 
 ```bash
 cd ~
@@ -203,11 +185,11 @@ pyenv('Version', '~/matlab_env/bin/python3.9')
 
 ## Test
 
-To test if the system is working correctly you can launch a simulation and order tasks or unespected events by executing Makefile recipes.
+To test if the system is working correctly you can launch a simulation and order tasks or unexpected events by executing Makefile recipes.
 
 **Note**: Simulation.launch file has some parameters to facilitate the configuration of the simulations, having parameters to select the number of UAVs, the Gazebo world, debug modes and some other things. See the heading of the file to know the different world options.
 
-```
+```bash
 make launch
 ...
 make monitor task_id=1 human_target=human_target_1 number=2 distance=1.5
@@ -227,23 +209,45 @@ rosnode kill /high_level_planner
 
 **Note**: For information on how to launch tasks manually you can run `make gesture_info` or just read the recipes in the Makefile.
 
+We can also use the tmuxinator tool to launch the simulation nodes in a more organized way using the [launch script](scripts/launch_matlab_ros_connection.sh) availbale in the scripts folder. This script creates a tmux session according to the specifications present in the [config file](scripts/matlab_ros_connection.yml). To use this method we'll need to install tmuxinator and add some shell additions to our terminal:
+
+```bash
+sudo apt install tmuxinator
+chmod +x scripts/launch_matlab_ros_connection.sh
+chmod +x scripts/shell_additions.sh
+./scripts/shell_additions.sh
+```
+
+Now we can launch the simulation using tmuxinator:
+
+```bash
+./scripts/launch_matlab_ros_connection.sh
+```
+
 ## Monitoring the Behaviour Tree execution with Groot
 
 There is a Make recipe for launching a Groot node to monitor the execution of the BT in real time or replay a log file.
 
 
-```
+```bash
 make groot
 ```
 
 To monitor a BT we just has to specify:
+
 * Server IP: localhost
 * Publisher Port: 1666 + (ID - 1) * 2
 * Server Port: 1667 + (ID - 1) * 2
 
 E.g. for the UAV_1:
+
 * Server IP: localhost
 * Publisher Port: 1666
 * Server Port: 1667
 
 **Note**: fbl log files are stored in `~/.ros` and are named as `bt_trace_uav_` + ID + `.fbl`
+
+## References
+
+<a id="1">[1]</a>
+Calvo, A., Silano, G., & Capitán, J. (2022, June). Mission planning and execution in heterogeneous teams of aerial robots supporting power line inspection operations. In 2022 International Conference on Unmanned Aircraft Systems (ICUAS) (pp. 1644-1649). IEEE.

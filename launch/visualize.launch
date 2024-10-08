@@ -1,0 +1,20 @@
+<launch>
+
+    <arg name="ns_prefix" default="uav"/>
+    <arg name="id" default="0"/>
+
+	<arg name="model_name" default="mbzirc"/>
+	<arg name="description_package" default="robots_description"/>
+
+	<param name="robot_description"
+	       command="$(eval 'xacro --inorder ' + find(description_package) + '/models/' + model_name + '/model.xacro')"/>
+
+    <group ns="$(arg ns_prefix)$(arg id)">
+        <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+            <param name="use_gui" value="true"/>
+        </node>
+        <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
+        <node name="rviz" pkg="rviz" type="rviz" args="-d $(find robots_description)/config/visualize.rviz" />
+    </group>
+
+</launch>

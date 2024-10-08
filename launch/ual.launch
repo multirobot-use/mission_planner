@@ -97,6 +97,13 @@
       </node>
     </group>
 
+    <!-- Launch model state publisher to visualize models in rviz -->
+    <include file="$(find mission_planner)/launch/visualizer.launch">
+      <arg name="ns_prefix" value="$(arg ns_prefix)"/>
+      <arg name="id" value="$(arg id)"/>
+      <arg name="model_name" value="$(arg robot_model)"/>
+    </include>
+
     <!-- Launch camera -->
     <node name="rqt_image_view_uav_$(arg id)" pkg="rqt_image_view" type="rqt_image_view" args="/$(arg ns_prefix)$(arg id)/cgo3_camera/image_raw" if="$(arg camera)"/>
 

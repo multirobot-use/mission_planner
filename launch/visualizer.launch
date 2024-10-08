@@ -7,10 +7,10 @@
 	<arg name="description_package" default="robots_description"/>
 
 	<param name="robot_description"
-	       command="$(eval 'xacro --inorder ' + find(description_package) + '/models/' + model_name + '/model.xacro')"/>
+       command="$(find xacro)/xacro --inorder '$(find $(arg description_package))/models/$(arg model_name)/model.xacro'"/>
 
     <group ns="$(arg ns_prefix)$(arg id)">
-        <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" output="screen"/>
+        <node name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" output="screen"/>
         <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="screen"/>
         <!--node name="rviz" pkg="rviz" type=   "rviz" args="-d $(find robots_description)/config/visualize.rviz" /-->
     </group>

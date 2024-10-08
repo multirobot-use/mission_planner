@@ -214,8 +214,7 @@ We can also use the tmuxinator tool to launch the simulation nodes in a more org
 ```bash
 sudo apt install tmuxinator
 chmod +x scripts/launch_matlab_ros_connection.sh
-chmod +x scripts/shell_additions.sh
-./scripts/shell_additions.sh
+source scripts/shell_additions.sh
 ```
 
 Now we can launch the simulation using tmuxinator:

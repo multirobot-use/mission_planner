@@ -9,7 +9,7 @@
   <arg name="pose_frame_id" default="map"/>
   <arg name="config_file" default="$(find mission_planner)/config/conf.yaml"/>
   <arg name="battery_faker" default="true"/>
-  <arg name="take_off_height" default="10"/>
+  <arg name="take_off_height" default="1"/>
   <arg name="distance_error" default="2"/>
   <arg name="goto_error" default="1"/>
 

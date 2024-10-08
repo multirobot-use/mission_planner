@@ -9,6 +9,7 @@
 
     <arg name="mode" default="sitl"/>
     <arg name="robot_model" default="mbzirc"/>
+    <arg name="robot_package" default="robots_description"/>
     <arg name="material" default="Orange"/>
 
     <arg name="camera" default="false"/>
@@ -45,7 +46,7 @@
       <!-- Launch robot -->
       <node pkg="px4_bringup" type="spawn_gzmodel.py" name="spawn_gzmodel_$(arg id)" output="screen"
         args="-model=$(arg robot_model) -id=$(arg id) -material=$(arg material) -ual_backend=$(arg ual_backend) 
-        -x $(arg x) -y $(arg y) -z $(arg z) -Y $(arg yaw)"/>
+        -x $(arg x) -y $(arg y) -z $(arg z) -Y $(arg yaw) -description_package=$(arg robot_package)"/>
 
       <!-- Launch UAL gazebo light server -->
       <node pkg="ual_backend_gazebo_light" type="ual_backend_gazebo_light_server" name="ual" ns="$(arg ns_prefix)$(arg id)" output="screen">

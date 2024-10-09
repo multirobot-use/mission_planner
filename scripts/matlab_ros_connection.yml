@@ -27,21 +27,21 @@ windows:
       layout: main-vertical
       panes:
         - waitForRos; roslaunch mission_planner agent.launch id:=1 type:=InspectionACW
-        - waitForRos; roslaunch mission_planner ual.launch ual_backend:=light material:=Green id:=1 x:=0 y:=0 z:=0 robot_model:=mbzirc robot_package:=robots_description camera:=false
+        - waitForRos; roslaunch mission_planner ual.launch ual_backend:=light material:=Green id:=1 x:=0 y:=0 z:=0 robot_model:=mbzirc robot_package:=robots_description camera:=false max_horizontal_velocity:=2
         - waitForRos; roslaunch mission_planner battery_faker.launch id:=1
         #- waitForSimulation; rosrun groot Groot &; roscd mission_planner
   - uav2:
       layout: main-vertical
       panes:
         - waitForRos; roslaunch mission_planner agent.launch id:=2 type:=InspectionACW
-        - waitForRos; roslaunch mission_planner ual.launch ual_backend:=light material:=Orange id:=2 x:=0 y:=5 z:=0 robot_model:=mbzirc robot_package:=robots_description camera:=false
+        - waitForRos; roslaunch mission_planner ual.launch ual_backend:=light material:=Orange id:=2 x:=0 y:=5 z:=0 robot_model:=mbzirc robot_package:=robots_description camera:=false max_horizontal_velocity:=5
         - waitForRos; roslaunch mission_planner battery_faker.launch id:=2
         #- waitForSimulation; rosrun groot Groot &; roscd mission_planner
   - uav3:
       layout: main-vertical
       panes:
         - waitForRos; roslaunch mission_planner agent.launch id:=3 type:=InspectionACW
-        - waitForRos; roslaunch mission_planner ual.launch ual_backend:=light material:=Red id:=3 x:=0 y:=-5 z:=0 robot_model:=mbzirc robot_package:=robots_description camera:=false
+        - waitForRos; roslaunch mission_planner ual.launch ual_backend:=light material:=Red id:=3 x:=0 y:=-5 z:=0 robot_model:=mbzirc robot_package:=robots_description camera:=false  max_horizontal_velocity:=2
         - waitForRos; roslaunch mission_planner battery_faker.launch id:=3
         - waitForRos; rosrun mission_planner ist_ugv_faker
         #- waitForSimulation; rosrun groot Groot &; roscd mission_planner

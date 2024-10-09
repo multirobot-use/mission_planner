@@ -7,7 +7,8 @@ tool = hammer
 ugv = jackal
 height = 2
 # geo_wp = 92.6349 -0.073258 10 18.1892 -1.076 10
-geo_wp = 40 -16 2 5 -16 2
+geo_wp = 45 -16 2 5 -16 2
+geo_wp_short = 25 -6 2 5 -6 2
 
 agent_prefix = uav
 agent_id = 1
@@ -67,9 +68,12 @@ groot:
 	@rosrun groot Groot &
 
 ros_simulation_tasks:
-	@rosrun mission_planner gesture_recognition_faker Inspection I $(waypoints)
+	@rosrun mission_planner gesture_recognition_faker PVArrayInspectionShort A $(geo_wp_short)
 	@rosrun mission_planner gesture_recognition_faker Monitoring F $(ugv) $(height)
-	@rosrun mission_planner gesture_recognition_faker PVArrayInspection A $(geo_wp)
+	@rosrun mission_planner gesture_recognition_faker PVArrayInspectionLong A $(geo_wp)
+
+ros_simulation_failures:
+	@rostopic pub /$(agent_prefix)2/battery_fake/control mission_planner/BatteryControl 2 0.2 0.01 0.01
 
 
 #Phase 1 are the tests executted to validate the Agent Behavior Manager in simulations with a single UAV

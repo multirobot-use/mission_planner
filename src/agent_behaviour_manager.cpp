@@ -708,7 +708,8 @@ BT::NodeStatus GoNearUGV::tick(){
       break;
   }
 
-
+  // Extract the current position of the UGV
+  classes::Position near_waypoint(agent_->atrvjr_pose_.getX(), agent_->atrvjr_pose_.getY(), height);
 
   while(!isHaltRequested())
   {
@@ -738,15 +739,15 @@ BT::NodeStatus GoNearUGV::tick(){
         if(isHaltRequested())
           return BT::NodeStatus::IDLE;
         ROS_INFO("[GoNearUGV] Moving near UGV...");
-        if(agent_->go_to_waypoint(agent_->atrvjr_pose_.getX(), agent_->atrvjr_pose_.getY(), height, false))
+        if(agent_->go_to_waypoint(near_waypoint.getX(), near_waypoint.getY(), near_waypoint.getZ(), false))
         {
-          while(!agent_->checkIfGoToServiceSucceeded(agent_->atrvjr_pose_.getX(), agent_->atrvjr_pose_.getY(), height))
+          while(!agent_->checkIfGoToServiceSucceeded(near_waypoint.getX(), near_waypoint.getY(), near_waypoint.getZ()))
           {
             if(isHaltRequested())
               return BT::NodeStatus::IDLE;
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
           }
-          if(classes::distance2D(agent_->atrvjr_pose_, agent_->position_) < agent_->distance_error_)
+          if (classes::distance2D(near_waypoint, agent_->position_) < agent_->distance_error_)
           {
             ROS_INFO("[GoNearUGV] Returning SUCCESS...");
             return BT::NodeStatus::SUCCESS;

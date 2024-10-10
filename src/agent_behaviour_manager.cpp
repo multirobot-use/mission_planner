@@ -71,24 +71,24 @@ BT::NodeStatus GoNearChargingStation::tick(){
   /*************************************************************************************************************/
 
   /************************** IST Collaboration: Mobile Charging Station ***************************************/
-  actionlib::SimpleActionClient<mission_planner::RequestMobileChargingStationAction> 
-    request_charging_ac_("/jackal0/cooperation_use/request_mobile_charging_station", true);
-  mission_planner::RequestMobileChargingStationGoal goal;
-  request_charging_ac_.waitForServer(ros::Duration(1.0));
-  goal.requester_id = agent_->id_;
-  request_charging_ac_.sendGoal(goal);
+  // actionlib::SimpleActionClient<mission_planner::RequestMobileChargingStationAction> 
+  //   request_charging_ac_("/jackal0/cooperation_use/request_mobile_charging_station", true);
+  // mission_planner::RequestMobileChargingStationGoal goal;
+  // request_charging_ac_.waitForServer(ros::Duration(1.0));
+  // goal.requester_id = agent_->id_;
+  // request_charging_ac_.sendGoal(goal);
 
-  //Wait for result. Maximum 5 seconds. If timeout, recharge on a fixed platform.
-  //If result, read result. If true, change assigned_charging_station_, if false, land on a fixed platform.
-  if(request_charging_ac_.waitForResult(ros::Duration(5.0)))
-  {
-    mission_planner::RequestMobileChargingStationResultConstPtr result = request_charging_ac_.getResult();
-    if(result->success)
-    {
-      assigned_charging_station = agent_->jackal_pose_;
-      aux = "mobile ";
-    }
-  }
+  // //Wait for result. Maximum 5 seconds. If timeout, recharge on a fixed platform.
+  // //If result, read result. If true, change assigned_charging_station_, if false, land on a fixed platform.
+  // if(request_charging_ac_.waitForResult(ros::Duration(5.0)))
+  // {
+  //   mission_planner::RequestMobileChargingStationResultConstPtr result = request_charging_ac_.getResult();
+  //   if(result->success)
+  //   {
+  //     assigned_charging_station = agent_->jackal_pose_;
+  //     aux = "mobile ";
+  //   }
+  // }
 
   /*************************************************************************************************************/
 

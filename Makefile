@@ -7,7 +7,7 @@ tool = hammer
 ugv = jackal
 height = 2
 # geo_wp = 92.6349 -0.073258 10 18.1892 -1.076 10
-geo_wp = 45 -16 2 5 -16 2
+geo_wp = 45 -13 2 5 -13 2
 geo_wp_short = 25 -6 2 5 -6 2
 
 agent_prefix = uav

@@ -97,6 +97,7 @@ class Agent{
 	//Getters
     std::string getID();
     std::string getType();
+	float getBattery();
 	bool getLastBeaconTimeout();
 
 	//Setters

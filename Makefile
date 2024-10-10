@@ -73,27 +73,7 @@ ros_simulation_tasks:
 	@rosrun mission_planner gesture_recognition_faker PVArrayInspectionLong A $(geo_wp)
 
 ros_simulation_failures:
-	@rosnode kill /uav2/agent_behaviour_manager
-	@rosservice call /uav2/ual/go_to_waypoint "waypoint:\
-		header:\
-			seq: 0\
-			stamp: 0\
-				secs: 0\
-				nsecs: 0\
-			frame_id: ''\
-		pose:\
-			position:\
-				x: 0.0\
-				y: 5.0\
-				z: 2.0\
-			orientation:\
-				x: 0.0\
-				y: 0.0\
-				z: 0.0\
-				w: 0.0\
-	blocking: false"
-	@rosservice call /uav2/ual/land "blocking: false"
-
+	@rostopic pub /$(agent_prefix)2/battery_fake/control mission_planner/BatteryControl 2 0.2 0.01 0.01
 
 #Phase 1 are the tests executted to validate the Agent Behavior Manager in simulations with a single UAV
 phase_1_tasks_1:

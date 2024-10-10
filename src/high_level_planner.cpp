@@ -756,6 +756,7 @@ float Agent::computeTaskCost(classes::Task* task){
 //class Agent Getters
 std::string Agent::getID(){return id_;}
 std::string Agent::getType(){return type_;}
+float Agent::getBattery(){return battery_;}
 bool Agent::getLastBeaconTimeout(){return last_beacon_.timeout;}
 
 //class Agent Setters
@@ -1351,9 +1352,10 @@ void Planner::performTaskAllocation(){
   // Create an action goal message
   mission_planner::HeuristicPlanningGoal goal;
   
-  // Fill the goal message
+  // Fill the goal message with the connected agents with battery enough
   for (auto &agent : agent_map_)
-    goal.available_agents.push_back(agent.first);
+    if (agent.second.getBattery() > 0.3)
+      goal.available_agents.push_back(agent.first);
 
   for (auto &task : pending_tasks_)
     goal.remaining_tasks.push_back(task.first);

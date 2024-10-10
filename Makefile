@@ -69,8 +69,8 @@ groot:
 
 ros_simulation_tasks:
 	@rosrun mission_planner gesture_recognition_faker PVArrayInspectionShort A $(geo_wp_short)
-	#@rosrun mission_planner gesture_recognition_faker Monitoring F $(ugv) $(height)
-	@rosrun mission_planner gesture_recognition_faker Monitoring D $(tool) $(human_target)
+	@rosrun mission_planner gesture_recognition_faker Monitoring F $(ugv) $(height)
+	#@rosrun mission_planner gesture_recognition_faker Monitoring D $(tool) $(human_target)
 	@rosrun mission_planner gesture_recognition_faker PVArrayInspectionLong A $(geo_wp)
 
 ros_simulation_failures:

@@ -27,7 +27,7 @@ windows:
       layout: main-vertical
       panes:
         - waitForRos; roslaunch mission_planner agent.launch id:=1 type:=InspectionACW
-        - waitForRos; roslaunch mission_planner ual.launch ual_backend:=light material:=Green id:=1 x:=0 y:=0 z:=0 robot_model:=mbzirc robot_package:=robots_description camera:=false max_horizontal_velocity:=1
+        - waitForRos; roslaunch mission_planner ual.launch ual_backend:=light material:=Green id:=1 x:=0 y:=0 z:=0 robot_model:=mbzirc robot_package:=robots_description camera:=false max_horizontal_velocity:=3
         - waitForRos; roslaunch mission_planner battery_faker.launch id:=1 battery_mode:=recharge_in_base
         #- waitForSimulation; rosrun groot Groot &; roscd mission_planner
   - uav2:
@@ -41,7 +41,7 @@ windows:
       layout: main-vertical
       panes:
         - waitForRos; roslaunch mission_planner agent.launch id:=3 type:=InspectionACW
-        - waitForRos; roslaunch mission_planner ual.launch ual_backend:=light material:=Red id:=3 x:=0 y:=-5 z:=0 robot_model:=mbzirc robot_package:=robots_description camera:=false  max_horizontal_velocity:=1
+        - waitForRos; roslaunch mission_planner ual.launch ual_backend:=light material:=Red id:=3 x:=0 y:=-5 z:=0 robot_model:=mbzirc robot_package:=robots_description camera:=false  max_horizontal_velocity:=3
         - waitForRos; roslaunch mission_planner battery_faker.launch id:=3 battery_mode:=recharge_in_base
         - waitForRos; rosrun mission_planner ist_ugv_faker
         #- waitForSimulation; rosrun groot Groot &; roscd mission_planner

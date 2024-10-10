@@ -82,9 +82,9 @@ positions:
 
 human_targets:
   human_target_1:
-    x: 0.0
+    x: 10.0
     y: 10.0
-    z: 3
+    z: 2
   
   human_target_2:
     x: -5.0
@@ -99,9 +99,9 @@ human_targets:
 tools:
   hammer:
     weight: 1.5
-    x: -2
-    y: 5
-    z: 3
+    x: 5
+    y: 10
+    z: 2
   
   wrench:
     weight: 0.7

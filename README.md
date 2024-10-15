@@ -1,21 +1,12 @@
-# Human-Aware Collaboration Planner
+# Mission Execution Architecture for Multi-UAV Teams
 
 ## Overview
 
-This repository contains a ROS framework that functions as a cognitive task planner and mission supervisor in charge of planning missions and governing the behavior of multi-UAV teams.
+This repository contains an architecture for mission planning and execution in heterogeneous teams of UAVs. The system addresses plan monitoring and execution in the context of Multi-Robot Task Allocation missions and it is implemented in [ROS](https://ros.org/) (Robot Operating System)(MRTA).
 
-The system is designed to ensure the safety of both airborne equipment and human workers at all times.
+This software architecture consists of two layers: a High-Level Planner, centralized on the ground station, and an Agent Behavior Manager, distributed on board each UAV. In this way, the High-Level Planner receives task requests as inputs, and its work is to coordinate all the UAVs, assigning to each of them a mission plan to follow. The Agent Behavior Manager is the one in charge of executing and supervising those plans, calling the appropriate lower-level controllers at any given time. The controllers for each specific action inside each of the tasks are not included in this work, but simple versions of those controllers can be found in this repository in order to be able to test the software layer properly in simulation.
 
-This system implements a software layer part of a multi-layer software architecture that is further divided into two, a High-Level Planner, centralized on the ground station, and an Agent Behavior Manager, distributed on board each UAV. In this way, the High-Level Planner receives task requests as inputs, and its work is to coordinate all the UAVs, assigning to each of them a mission plan to follow. The Agent Behavior Manager is the one in charge of executing and supervising those plans, calling the appropriate lower-level controllers at any given time.
-
-The controllers for each specific action inside each of the tasks are not included in this work, but simple
-versions of those controllers can be found in this repository in order to be able to test the software layer properly in simulation.
-
-The multi-robot task allocation during the mission planning process is performed by an heuristic algorithm implemented in Matlab that can be found in a [separate repository](https://github.com/multirobot-use/task_planner). This Matlab code is connected with ROS through the [matlab_ros_connector](scripts/matlab_ros_connector.m) script available in the scripts folder. It implements a ROS Action Server that receives planning and replanning requests from the High-Level Planner.
-
-This software is currently being developed on Ubuntu 20.04 with ROS Noetic.
-
-A more detailed description of the ROS framework can be found in [[1]](#1).
+The system is flexible and different modules could be plugged in as High-level Planner as long as they resolve MRTA missions for heterogeneous teams of UAVs. A specific MRTA planner in a separate [repository](https://github.com/multirobot-use/mrta_heuristic_planner), written in Matlab, has been successfully integrated in the architectured contained in the current repository. This Matlab code is connected with ROS through the [matlab_ros_connector](scripts/matlab_ros_connector.m) script available in the scripts folder, which implements a ROS Action Server that receives planning and replanning requests from a High-Level Planner.
 
 If you are using this software layer or you found this approach inspiring for your own research, please cite:
 
@@ -32,7 +23,7 @@ If you are using this software layer or you found this approach inspiring for yo
 
 ## Installation
 
-To install the repositories correctly, you have to follow the next steps:
+This software has been developed on Ubuntu 20.04 with ROS Noetic. To install the repository correctly, you have to follow the next steps:
 
 0.1. ROS Noetic installation
 
@@ -79,12 +70,12 @@ source devel/setup.bash
 echo "source $HOME/mission_planner_ws/devel/setup.bash" >> ~/.bashrc
 ```
 
-3. Clone necessary repositories
+3. Clone this repository and other ones as dependencies
 
 ```bash
 cd ~/mission_planner_ws/src/
-git clone https://github.com/multirobot-use/mission_planner.git
-git clone https://github.com/multirobot-use/task_planner.git
+git clone https://github.com/multirobot-use/mrta_execution_architecture.git
+git clone https://github.com/multirobot-use/mrta_heuristic_planner.git
 git clone https://github.com/grvcTeam/grvc-ual.git
 git clone https://github.com/grvcTeam/grvc-utils.git
 ```
@@ -162,7 +153,7 @@ catkin build
 
 12. Matlab setup
 
-To use ROS in Matlab we need the [ROS Toolbox](https://www.mathworks.com/products/ros.html). Once the toolbox is installed, to set up the Matlab-ROS connection, we need to open Matlab as admin (in order to be able to save Matlab's path) and then run the [gen_matlab_msgs](scripts/gen_matlab_msgs.m) script.
+To use ROS with Matlab, we need the [ROS Toolbox](https://www.mathworks.com/products/ros.html). Once the toolbox is installed, in order to set up the Matlab-ROS connection, you need to open Matlab as admin (to be able to save Matlab's path) and then run the [gen_matlab_msgs](scripts/gen_matlab_msgs.m) script.
 
 ```bash
 roscd mission_planner
@@ -170,9 +161,9 @@ cd scripts
 sudo matlab -nodisplay -nosplash -r "gen_matlab_msgs; exit"
 ```
 
-We will also need to include [task_planner](https://github.com/multirobot-use/task_planner) installation folder and subfolders in the MATLAB's path.
+You will also need to include the [mrta_heuristic_planner](https://github.com/multirobot-use/mrta_heuristic_planner) installation folder and subfolders in the MATLAB's path.
 
-If you experience problems related with the python executable while executing the above script, you may find useful to create a virtual python environment, e.g., in my case, ROS need python3.8 to be the default python executable, but MATLAB 2023b needs python3.9. Creating a virtual python environment and specifying it's executable route in the ROS Toolbox Preferences solved the problem for me:
+If you experience problems related with the python executable while executing the above script, you may find useful to create a virtual python environment. For instance, if ROS needs python3.8 to be the default python executable, but MATLAB 2023b needs python3.9., creating a virtual python environment and specifying it's executable route in the ROS Toolbox Preferences could solve this issue:
 
 ```bash
 cd ~
@@ -185,9 +176,9 @@ pyenv('Version', '~/matlab_env/bin/python3.9')
 
 ## Test
 
-To test if the system is working correctly you can launch a simulation and order tasks or unexpected events by executing Makefile recipes.
+To test if the system is working correctly, you can launch a simulation and order tasks or unexpected events by executing Makefile recipes.
 
-**Note**: Simulation.launch file has some parameters to facilitate the configuration of the simulations, having parameters to select the number of UAVs, the Gazebo world, debug modes and some other things. See the heading of the file to know the different world options.
+**Note**: The `Simulation.launch` file has some parameters to facilitate the configuration of the simulations, having parameters to select the number of UAVs, the Gazebo world, debug modes and some other things. See the heading of the file to know the different world options.
 
 ```bash
 make launch
@@ -207,9 +198,9 @@ rosrun mission_planner agent_behaviour_manager __ns:uav_1
 rosnode kill /high_level_planner
 ```
 
-**Note**: For information on how to launch tasks manually you can run `make gesture_info` or just read the recipes in the Makefile.
+**Note**: For information on how to launch tasks manually, you can run `make gesture_info` or just read the recipes in the Makefile.
 
-We can also use the tmuxinator tool to launch the simulation nodes in a more organized way using the [launch script](scripts/launch_matlab_ros_connection.sh) availbale in the scripts folder. This script creates a tmux session according to the specifications present in the [config file](scripts/matlab_ros_connection.yml). To use this method we'll need to install tmuxinator and add some shell additions to our terminal:
+You can also use the `tmuxinator` tool to launch the simulation nodes in a more organized way using the [launch script](scripts/launch_matlab_ros_connection.sh) available in the scripts folder. This script creates a tmux session according to the specifications present in the [config file](scripts/matlab_ros_connection.yml). To use this method, you'll need to install `tmuxinator` and incorporate some shell additions to our terminal:
 
 ```bash
 sudo apt install tmuxinator
@@ -217,7 +208,7 @@ chmod +x scripts/launch_matlab_ros_connection.sh
 source scripts/shell_additions.sh
 ```
 
-Now we can launch the simulation using tmuxinator:
+Now you can launch the simulation using `tmuxinator`:
 
 ```bash
 ./scripts/launch_matlab_ros_connection.sh
@@ -225,28 +216,23 @@ Now we can launch the simulation using tmuxinator:
 
 ## Monitoring the Behaviour Tree execution with Groot
 
-There is a Make recipe for launching a Groot node to monitor the execution of the BT in real time or replay a log file.
+There is a Make recipe to launch a Groot node that monitors the execution of the Behavior Trees in real time or replays a log file.
 
 
 ```bash
 make groot
 ```
 
-To monitor a BT we just has to specify:
+To monitor a Behavior Tree, you just has to specify:
 
 * Server IP: localhost
 * Publisher Port: 1666 + (ID - 1) * 2
 * Server Port: 1667 + (ID - 1) * 2
 
-E.g. for the UAV_1:
+E.g., for the UAV_1:
 
 * Server IP: localhost
 * Publisher Port: 1666
 * Server Port: 1667
 
 **Note**: fbl log files are stored in `~/.ros` and are named as `bt_trace_uav_` + ID + `.fbl`
-
-## References
-
-<a id="1">[1]</a>
-Calvo, A., Silano, G., & Capitán, J. (2022, June). Mission planning and execution in heterogeneous teams of aerial robots supporting power line inspection operations. In 2022 International Conference on Unmanned Aircraft Systems (ICUAS) (pp. 1644-1649). IEEE.

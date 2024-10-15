@@ -4,7 +4,7 @@
 
 This repository contains an architecture for mission planning and execution in heterogeneous teams of UAVs. The system addresses plan monitoring and execution in the context of Multi-Robot Task Allocation missions and it is implemented in [ROS](https://ros.org/) (Robot Operating System)(MRTA).
 
-This software architecture consists of two layers: a High-Level Planner, centralized on the ground station, and an Agent Behavior Manager, distributed on board each UAV. In this way, the High-Level Planner receives task requests as inputs, and its work is to coordinate all the UAVs, assigning to each of them a mission plan to follow. The Agent Behavior Manager is the one in charge of executing and supervising those plans, calling the appropriate lower-level controllers at any given time. The controllers for each specific action inside each of the tasks are not included in this work, but simple versions of those controllers can be found in this repository in order to be able to test the software layer properly in simulation.
+This software architecture consists of two layers: a High-Level Planner, centralized on the ground station, and an Agent Behavior Manager, distributed on board each UAV. In this way, the High-Level Planner receives task requests as input, and its work is to solve a resource-constrained problem that allows distributing tasks among the team taking into account vehicles’ capabilities and battery constraints. The Agent Behavior Manager, based on Behavior Trees, is in charge of executing and supervising those plans, calling the appropriate lower-level controllers at any given time. The controllers for each specific action inside each of the tasks are not included in this work, but simple versions of those controllers can be found in this repository in order to be able to test the software layer properly in simulation. Last, replanning operations are triggered in case of unforeseen events, such as vehicle faults or communication drop-outs.
 
 The system is flexible and different modules could be plugged in as High-level Planner as long as they resolve MRTA missions for heterogeneous teams of UAVs. A specific MRTA planner in a separate [repository](https://github.com/multirobot-use/mrta_heuristic_planner), written in Matlab, has been successfully integrated in the architectured contained in the current repository. This Matlab code is connected with ROS through the [matlab_ros_connector](scripts/matlab_ros_connector.m) script available in the scripts folder, which implements a ROS Action Server that receives planning and replanning requests from a High-Level Planner.
 
@@ -214,7 +214,7 @@ Now you can launch the simulation using `tmuxinator`:
 ./scripts/launch_matlab_ros_connection.sh
 ```
 
-## Monitoring the Behaviour Tree execution with Groot
+## Monitoring the Behavior Tree execution with Groot
 
 There is a Make recipe to launch a Groot node that monitors the execution of the Behavior Trees in real time or replays a log file.
 
